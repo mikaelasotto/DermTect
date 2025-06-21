@@ -25,6 +25,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -60,6 +62,8 @@ import coil.request.ImageRequest
 import com.example.dermtect.ui.theme.DermTectTheme
 import kotlinx.coroutines.delay
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.foundation.BorderStroke
 
 
 val poppinsFont = FontFamily(
@@ -82,6 +86,11 @@ class MainActivity : ComponentActivity() {
                     composable("choose_account") { ChooseAccount(navController) }
                     composable("login") { Login(navController) }
                     composable("register") { Register(navController) }
+                    composable("tutorial_screen1") { TutorialScreen1(navController) }
+                    composable("tutorial_screen2") { TutorialScreen2(navController) }
+                    composable("tutorial_screen3") { TutorialScreen3(navController) }
+                    composable("tutorial_screen4") { TutorialScreen4(navController) }
+                    composable("tutorial_screen5") { TutorialScreen5(navController) }
                 }
             }
         }
@@ -913,7 +922,7 @@ fun Register(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun Register() {
+fun RegisterPreview() {
     DermTectTheme {
         // Safe preview with empty lambda
         Register(navController = rememberNavController())
@@ -1036,7 +1045,7 @@ fun ForgotPass1(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun ForgotPass1() {
+fun ForgotPass1Preview() {
     DermTectTheme {
         // Safe preview with empty lambda
         ForgotPass1(navController = rememberNavController())
@@ -1176,7 +1185,7 @@ fun ForgotPass2(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun ForgotPass2() {
+fun ForgotPass2Preview() {
     DermTectTheme {
         // Safe preview with empty lambda
         ForgotPass2(navController = rememberNavController())
@@ -1310,7 +1319,7 @@ fun ForgotPass3(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun ForgotPass3() {
+fun ForgotPass3Preview() {
     DermTectTheme {
         // Safe preview with empty lambda
         ForgotPass3(navController = rememberNavController())
@@ -1460,7 +1469,7 @@ fun ForgotPass4(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun ForgotPass4() {
+fun ForgotPass4Preview() {
     DermTectTheme {
         // Safe preview with empty lambda
         ForgotPass4(navController = rememberNavController())
@@ -1468,3 +1477,550 @@ fun ForgotPass4() {
 }
 
 
+@Composable
+fun TutorialScreen1(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Back Button
+        Image(
+            painter = painterResource(id = R.drawable.back), // Replace with your file name
+            contentDescription = "Back",
+            modifier = Modifier
+                .size(75.dp)
+                .offset(x = 25.dp, y = 50.dp)
+        )
+
+        // Center Image
+        Image(
+            painter = painterResource(id = R.drawable.tutorial_pic1), // Replace with your image
+            contentDescription = "Tutorial Image",
+            modifier = Modifier
+                .offset(x = 88.dp, y = 104.dp)
+                .size(width = 261.dp, height = 400.06.dp)
+        )
+
+        // Bottom Rectangle (Description Box)
+        Box(
+            modifier = Modifier
+                .offset(y = 501.dp)
+                .fillMaxWidth()
+                .height(391.dp)
+                .border(
+                    width = 0.5.dp,
+                    color = Color(0xFF0FB2B2),
+                    shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
+                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(64.dp)) // Approx. y = 565 - y = 501
+
+                Text(
+                    text = "Frame the Spot",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "Take a square photo with the mole or lesion centered in the frame.",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Next Button
+                Button(
+                    onClick = { navController.navigate("tutorial_screen2") },
+                    modifier = Modifier
+                        .width(307.dp)
+                        .height(46.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF0FB2B2),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Next", fontFamily = poppinsFont, fontSize = 16.sp)
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Skip Button
+                OutlinedButton(
+                    onClick = { /* skip logic */ },
+                    modifier = Modifier
+                        .width(307.dp)
+                        .height(46.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color(0xFF0FB2B2)
+                    ),
+                    border = BorderStroke(0.5.dp, Color(0xFF0FB2B2))
+                ) {
+                    Text("Skip", fontFamily = poppinsFont, fontSize = 16.sp)
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TutorialScreen1Preview() {
+    DermTectTheme {
+        // Safe preview with empty lambda
+        TutorialScreen1(navController = rememberNavController())
+    }
+}
+
+
+@Composable
+fun TutorialScreen2(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Back Button
+        Image(
+            painter = painterResource(id = R.drawable.back), // Replace with your file name
+            contentDescription = "Back",
+            modifier = Modifier
+                .size(75.dp)
+                .offset(x = 25.dp, y = 50.dp)
+        )
+
+        // Center Image
+        Image(
+            painter = painterResource(id = R.drawable.tutorial_pic2), // Replace with your image
+            contentDescription = "Tutorial Image",
+            modifier = Modifier
+                .offset(x = 42.dp, y = 159.dp)
+                .size(width = 328.dp, height = 246.dp)
+        )
+
+        // Bottom Rectangle (Description Box)
+        Box(
+            modifier = Modifier
+                .offset(y = 501.dp)
+                .fillMaxWidth()
+                .height(391.dp)
+                .border(
+                    width = 0.5.dp,
+                    color = Color(0xFF0FB2B2),
+                    shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
+                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(64.dp)) // Approx. y = 565 - y = 501
+
+                Text(
+                    text = "Get Close, But Not Too Close",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "Hold your camera 2–4 inches (5–10 cm) away for a clear, focused image.",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Next Button
+                Button(
+                    onClick = { navController.navigate("tutorial_screen3") },
+                    modifier = Modifier
+                        .width(307.dp)
+                        .height(46.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF0FB2B2),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Next", fontFamily = poppinsFont, fontSize = 16.sp)
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Skip Button
+                OutlinedButton(
+                    onClick = { /* skip logic */ },
+                    modifier = Modifier
+                        .width(307.dp)
+                        .height(46.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color(0xFF0FB2B2)
+                    ),
+                    border = BorderStroke(0.5.dp, Color(0xFF0FB2B2))
+                ) {
+                    Text("Skip", fontFamily = poppinsFont, fontSize = 16.sp)
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TutorialScreen2Preview() {
+    DermTectTheme {
+        // Safe preview with empty lambda
+        TutorialScreen2(navController = rememberNavController())
+    }
+}
+
+@Composable
+fun TutorialScreen3(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Back Button
+        Image(
+            painter = painterResource(id = R.drawable.back), // Replace with your file name
+            contentDescription = "Back",
+            modifier = Modifier
+                .size(75.dp)
+                .offset(x = 25.dp, y = 50.dp)
+        )
+
+        // Center Image
+        Image(
+            painter = painterResource(id = R.drawable.tutorial_pic3), // Replace with your image
+            contentDescription = "Tutorial Image",
+            modifier = Modifier
+                .offset(x = 66.dp, y = 155.dp)
+                .size(width = 280.dp, height = 280.dp)
+        )
+
+        // Bottom Rectangle (Description Box)
+        Box(
+            modifier = Modifier
+                .offset(y = 501.dp)
+                .fillMaxWidth()
+                .height(391.dp)
+                .border(
+                    width = 0.5.dp,
+                    color = Color(0xFF0FB2B2),
+                    shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
+                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(64.dp)) // Approx. y = 565 - y = 501
+
+                Text(
+                    text = "Keep It Clean",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "Make sure the skin is well-lit and free of hair, jewelry, or makeup that may block the view.",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Next Button
+                Button(
+                    onClick = { navController.navigate("tutorial_screen4") },
+                    modifier = Modifier
+                        .width(307.dp)
+                        .height(46.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF0FB2B2),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Next", fontFamily = poppinsFont, fontSize = 16.sp)
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Skip Button
+                OutlinedButton(
+                    onClick = { /* skip logic */ },
+                    modifier = Modifier
+                        .width(307.dp)
+                        .height(46.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color(0xFF0FB2B2)
+                    ),
+                    border = BorderStroke(0.5.dp, Color(0xFF0FB2B2))
+                ) {
+                    Text("Skip", fontFamily = poppinsFont, fontSize = 16.sp)
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TutorialScreen3Preview() {
+    DermTectTheme {
+        // Safe preview with empty lambda
+        TutorialScreen3(navController = rememberNavController())
+    }
+}
+
+
+@Composable
+fun TutorialScreen4(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Back Button
+        Image(
+            painter = painterResource(id = R.drawable.back), // Replace with your file name
+            contentDescription = "Back",
+            modifier = Modifier
+                .size(75.dp)
+                .offset(x = 25.dp, y = 50.dp)
+        )
+
+        // Center Image
+        Image(
+            painter = painterResource(id = R.drawable.tutorial_pic4), // Replace with your image
+            contentDescription = "Tutorial Image",
+            modifier = Modifier
+                .offset(x = 66.dp, y = 155.dp)
+                .size(width = 280.dp, height = 280.dp)
+        )
+
+        // Bottom Rectangle (Description Box)
+        Box(
+            modifier = Modifier
+                .offset(y = 501.dp)
+                .fillMaxWidth()
+                .height(391.dp)
+                .border(
+                    width = 0.5.dp,
+                    color = Color(0xFF0FB2B2),
+                    shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
+                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(64.dp)) // Approx. y = 565 - y = 501
+
+                Text(
+                    text = "Save and Track",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "After scanning, your result is saved automatically. You can track your scan history and monitor any changes over time.",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Next Button
+                Button(
+                    onClick = { navController.navigate("tutorial_screen5") },
+                    modifier = Modifier
+                        .width(307.dp)
+                        .height(46.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF0FB2B2),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Next", fontFamily = poppinsFont, fontSize = 16.sp)
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Skip Button
+                OutlinedButton(
+                    onClick = { /* skip logic */ },
+                    modifier = Modifier
+                        .width(307.dp)
+                        .height(46.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color(0xFF0FB2B2)
+                    ),
+                    border = BorderStroke(0.5.dp, Color(0xFF0FB2B2))
+                ) {
+                    Text("Skip", fontFamily = poppinsFont, fontSize = 16.sp)
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TutorialScreen4Preview() {
+    DermTectTheme {
+        // Safe preview with empty lambda
+        TutorialScreen4(navController = rememberNavController())
+    }
+}
+
+
+@Composable
+fun TutorialScreen5(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Back Button
+        Image(
+            painter = painterResource(id = R.drawable.back), // Replace with your file name
+            contentDescription = "Back",
+            modifier = Modifier
+                .size(75.dp)
+                .offset(x = 25.dp, y = 50.dp)
+        )
+
+        // Center Image
+        Image(
+            painter = painterResource(id = R.drawable.tutorial_pic5), // Replace with your image
+            contentDescription = "Tutorial Image",
+            modifier = Modifier
+                .offset(x = 66.dp, y = 155.dp)
+                .size(width = 280.dp, height = 280.dp)
+        )
+
+        // Bottom Rectangle (Description Box)
+        Box(
+            modifier = Modifier
+                .offset(y = 501.dp)
+                .fillMaxWidth()
+                .height(391.dp)
+                .border(
+                    width = 0.5.dp,
+                    color = Color(0xFF0FB2B2),
+                    shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
+                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(64.dp)) // Approx. y = 565 - y = 501
+
+                Text(
+                    text = "Download & Consult",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "Generate your PDF report anytime — and use the clinic locator to find a nearby dermatologist for further check-up.",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Next Button
+                Button(
+                    onClick = { navController.navigate("next_tutorial_screen") },
+                    modifier = Modifier
+                        .width(307.dp)
+                        .height(46.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF0FB2B2),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Next", fontFamily = poppinsFont, fontSize = 16.sp)
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Skip Button
+                OutlinedButton(
+                    onClick = { /* skip logic */ },
+                    modifier = Modifier
+                        .width(307.dp)
+                        .height(46.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color(0xFF0FB2B2)
+                    ),
+                    border = BorderStroke(0.5.dp, Color(0xFF0FB2B2))
+                ) {
+                    Text("Skip", fontFamily = poppinsFont, fontSize = 16.sp)
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TutorialScreen5Preview() {
+    DermTectTheme {
+        // Safe preview with empty lambda
+        TutorialScreen5(navController = rememberNavController())
+    }
+}
