@@ -1,10 +1,12 @@
 package com.example.dermtect
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -35,10 +38,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,6 +59,7 @@ import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import com.example.dermtect.ui.theme.DermTectTheme
 import kotlinx.coroutines.delay
+import androidx.compose.ui.text.TextStyle
 
 
 val poppinsFont = FontFamily(
@@ -835,7 +843,7 @@ fun Register(navController: NavController) {
             TextField(
                 value = confirmpass,
                 onValueChange = { confirmpass = it },
-                placeholder = { Text("Password", fontFamily = poppinsFont) },
+                placeholder = { Text("Confirm Password", fontFamily = poppinsFont) },
                 modifier = Modifier
                     .width(299.dp)
                     .height(52.dp)
@@ -909,6 +917,553 @@ fun Register() {
     DermTectTheme {
         // Safe preview with empty lambda
         Register(navController = rememberNavController())
+    }
+}
+
+@Composable
+fun ForgotPass1(navController: NavController) {
+
+    var email by remember { mutableStateOf("") }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Top-left bubble
+        Image(
+            painter = painterResource(id = R.drawable.bubbles_top),
+            contentDescription = "Top Left Bubble",
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .offset(x = (-24).dp, y = (-24).dp)
+                .size(200.dp)
+        )
+
+        // Bottom-right bubble
+        Image(
+            painter = painterResource(id = R.drawable.bubbles_bottom),
+            contentDescription = "Bottom Right Bubble",
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = (24).dp, y = (24).dp)
+                .size(200.dp)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            // Title
+            Text(
+                text = "Forgot password",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = poppinsFont,
+                color = Color(0xFF1D1D1D),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Title
+            Text(
+                text = "Please enter your email to reset the password",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = poppinsFont,
+                color = Color(0xFF989898),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Title
+            Text(
+                text = "Your Email",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = poppinsFont,
+                color = Color(0xFF1D1D1D),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Password
+            TextField(
+                value = email,
+                onValueChange = { email = it },
+                placeholder = { Text("name@example.com", fontFamily = poppinsFont) },
+                modifier = Modifier
+                    .width(299.dp)
+                    .height(52.dp)
+                    .background(Color(0xFFF4F3F3), RoundedCornerShape(12.dp))
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = { /* navController.navigate("home") */ },
+                modifier = Modifier
+                    .width(299.dp)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0FB2B2),
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = "Reset Password",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFont
+                )
+            }
+
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ForgotPass1() {
+    DermTectTheme {
+        // Safe preview with empty lambda
+        ForgotPass1(navController = rememberNavController())
+    }
+}
+
+@Composable
+fun ForgotPass2(navController: NavController) {
+
+    var email by remember { mutableStateOf("") }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+
+        // Top-left bubble
+        Image(
+            painter = painterResource(id = R.drawable.bubbles_top),
+            contentDescription = "Top Left Bubble",
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .offset(x = (-24).dp, y = (-24).dp)
+                .size(200.dp)
+        )
+
+        // Bottom-right bubble
+        Image(
+            painter = painterResource(id = R.drawable.bubbles_bottom),
+            contentDescription = "Bottom Right Bubble",
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = (24).dp, y = (24).dp)
+                .size(200.dp)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            // Title
+            Text(
+                text = "Check your email",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = poppinsFont,
+                color = Color(0xFF1D1D1D),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Title
+            Text(
+                text = "We sent a reset link to example@email.com\nenter 5 digit code that mentioned in the email",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = poppinsFont,
+                color = Color(0xFF989898),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                modifier = Modifier
+                    .padding(top = 32.dp)
+            ) {
+                repeat(5) {
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .border(
+                                width = 2.dp,
+                                color = Color(0xFF648DDB), // stroke color
+                                shape = RoundedCornerShape(8.dp) // optional: rounded corners
+                            )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = { /* navController.navigate("home") */ },
+                modifier = Modifier
+                    .width(299.dp)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0FB2B2),
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = "Verify Code",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFont
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Box(
+                modifier = Modifier
+                    .width(299.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = buildAnnotatedString {
+                        append("Haven’t got the email yet? ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = Color(0xFF2FD8D8), // highlight color
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        ) {
+                            append("Resend email")
+                        }
+                    },
+                    fontSize = 12.sp,
+                    fontFamily = poppinsFont,
+                    color = Color(0xFF1D1D1D)
+                )
+            }
+        }
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun ForgotPass2() {
+    DermTectTheme {
+        // Safe preview with empty lambda
+        ForgotPass2(navController = rememberNavController())
+    }
+}
+
+
+@Composable
+fun ResendEmailText(onResendClick: () -> Unit) {
+    val context = LocalContext.current
+
+    val annotatedText = buildAnnotatedString {
+        append("Haven’t got the email yet? ")
+
+        pushStringAnnotation(
+            tag = "RESEND", annotation = "resend"
+        )
+        withStyle(
+            style = SpanStyle(
+                color = Color(0xFF2FD8D8),
+                fontWeight = FontWeight.SemiBold
+            )
+        ) {
+            append("Resend email")
+        }
+        pop()
+    }
+
+    ClickableText(
+        text = annotatedText,
+        style = TextStyle(
+            fontSize = 12.sp,
+            fontFamily = poppinsFont,
+            color = Color(0xFF1D1D1D)
+        ),
+        onClick = { offset ->
+            annotatedText.getStringAnnotations(
+                tag = "RESEND", start = offset, end = offset
+            ).firstOrNull()?.let {
+                onResendClick()
+            }
+        }
+    )
+}
+
+
+@Composable
+fun ForgotPass3(navController: NavController) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Top-left bubble
+        Image(
+            painter = painterResource(id = R.drawable.bubbles_top),
+            contentDescription = "Top Left Bubble",
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .offset(x = (-24).dp, y = (-24).dp)
+                .size(200.dp)
+        )
+
+        // Bottom-right bubble
+        Image(
+            painter = painterResource(id = R.drawable.bubbles_bottom),
+            contentDescription = "Bottom Right Bubble",
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = (24).dp, y = (24).dp)
+                .size(200.dp)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            // Title
+            Text(
+                text = "Password Reset",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = poppinsFont,
+                color = Color(0xFF1D1D1D),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Title
+            Text(
+                text = "Your password has been successfully reset.\nClick confirm to set a new password",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = poppinsFont,
+                color = Color(0xFF989898),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = { /* navController.navigate("home") */ },
+                modifier = Modifier
+                    .width(299.dp)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0FB2B2),
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = "Confirm",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFont
+                )
+            }
+
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ForgotPass3() {
+    DermTectTheme {
+        // Safe preview with empty lambda
+        ForgotPass3(navController = rememberNavController())
+    }
+}
+
+
+@Composable
+fun ForgotPass4(navController: NavController) {
+
+    var password by remember { mutableStateOf("") }
+    var confirmpass by remember { mutableStateOf("") }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Top-left bubble
+        Image(
+            painter = painterResource(id = R.drawable.bubbles_top),
+            contentDescription = "Top Left Bubble",
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .offset(x = (-24).dp, y = (-24).dp)
+                .size(200.dp)
+        )
+
+        // Bottom-right bubble
+        Image(
+            painter = painterResource(id = R.drawable.bubbles_bottom),
+            contentDescription = "Bottom Right Bubble",
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = (24).dp, y = (24).dp)
+                .size(200.dp)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            // Title
+            Text(
+                text = "Set a new password",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = poppinsFont,
+                color = Color(0xFF1D1D1D),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Title
+            Text(
+                text = "Create a new password. Ensure it differs from previous ones for security.",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = poppinsFont,
+                color = Color(0xFF989898),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Password",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = poppinsFont,
+                color = Color(0xFF1D1D1D),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Password
+            TextField(
+                value = password,
+                onValueChange = { password = it },
+                placeholder = { Text("Password", fontFamily = poppinsFont) },
+                modifier = Modifier
+                    .width(299.dp)
+                    .height(52.dp)
+                    .background(Color(0xFFF4F3F3), RoundedCornerShape(12.dp))
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "Confirm Password",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = poppinsFont,
+                color = Color(0xFF1D1D1D),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Confirm Password
+            TextField(
+                value = confirmpass,
+                onValueChange = { confirmpass = it },
+                placeholder = { Text("Confirm Password", fontFamily = poppinsFont) },
+                modifier = Modifier
+                    .width(299.dp)
+                    .height(52.dp)
+                    .background(Color(0xFFF4F3F3), RoundedCornerShape(12.dp))
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = { /* navController.navigate("home") */ },
+                modifier = Modifier
+                    .width(299.dp)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0FB2B2),
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = "Update Password",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFont
+                )
+            }
+
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ForgotPass4() {
+    DermTectTheme {
+        // Safe preview with empty lambda
+        ForgotPass4(navController = rememberNavController())
     }
 }
 
