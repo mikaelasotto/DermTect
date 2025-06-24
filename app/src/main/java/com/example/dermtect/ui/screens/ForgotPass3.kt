@@ -59,7 +59,7 @@ fun ForgotPass3(navController: NavController) {
             PrimaryButton(
                 text = "Confirm",
                 onClick = {
-                    // navController.navigate("forgotpass4") or wherever
+                    navController.navigate("forgot_pass4")
                 }
             )
         }

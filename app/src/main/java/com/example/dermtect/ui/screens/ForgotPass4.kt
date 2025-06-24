@@ -118,7 +118,7 @@ fun ForgotPass4(navController: NavController) {
             PrimaryButton(
                 text = "Update Password",
                 onClick = {
-                    // navController.navigate("home") or your desired screen
+                    navController.navigate("tutorial_screen1")
                 }
             )
         }

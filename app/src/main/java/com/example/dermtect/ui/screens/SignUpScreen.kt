@@ -1,5 +1,7 @@
 package com.example.dermtect.ui.screens
 
+import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,38 +40,30 @@ import com.example.dermtect.R
 import com.example.dermtect.poppinsFont
 import com.example.dermtect.ui.theme.DermTectTheme
 import com.example.dermtect.ui.components.InputField
+import com.example.dermtect.ui.components.TopBottomBubbles
 
 @Composable
 fun Register(navController: NavController) {
+    val context = LocalContext.current
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmpass by remember { mutableStateOf("") }
+
+    var showPassword by remember { mutableStateOf(false) }
+    var showConfirmPassword by remember { mutableStateOf(false) }
+
+    val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    val isPasswordMatch = password == confirmpass && password.isNotBlank()
+
+    val isFormValid = isEmailValid && isPasswordMatch
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // Top-left bubble
-        Image(
-            painter = painterResource(id = R.drawable.bubbles_top),
-            contentDescription = "Top Left Bubble",
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .offset(x = (-24).dp, y = (-24).dp)
-                .size(200.dp)
-        )
-
-        // Bottom-right bubble
-        Image(
-            painter = painterResource(id = R.drawable.bubbles_bottom),
-            contentDescription = "Bottom Right Bubble",
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .offset(x = (24).dp, y = (24).dp)
-                .size(200.dp)
-        )
+        TopBottomBubbles()
 
         Column(
             modifier = Modifier
@@ -77,7 +72,6 @@ fun Register(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // Title
             Text(
                 text = "Sign Up",
                 fontSize = 40.sp,
@@ -92,7 +86,10 @@ fun Register(navController: NavController) {
                 value = email,
                 onValueChange = { email = it },
                 placeholder = "Email",
-                iconRes = R.drawable.icon_email
+                iconRes = R.drawable.icon_email,
+                textColor = Color.Black,
+                isPassword = false,
+                errorMessage = if (email.isNotBlank() && !isEmailValid) "Enter a valid email" else null
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -101,7 +98,11 @@ fun Register(navController: NavController) {
                 value = password,
                 onValueChange = { password = it },
                 placeholder = "Password",
-                iconRes = R.drawable.icon_pass
+                iconRes = R.drawable.icon_pass,
+                textColor = Color.Black,
+                isPassword = !showPassword,
+                togglePasswordVisibility = { showPassword = !showPassword },
+                errorMessage = if (password.isBlank()) "Password is required" else null
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -110,19 +111,23 @@ fun Register(navController: NavController) {
                 value = confirmpass,
                 onValueChange = { confirmpass = it },
                 placeholder = "Confirm Password",
-                iconRes = R.drawable.icon_pass // you can use a different icon if needed
+                iconRes = R.drawable.icon_pass,
+                textColor = Color.Black,
+                isPassword = !showConfirmPassword,
+                togglePasswordVisibility = { showConfirmPassword = !showConfirmPassword },
+                errorMessage = if (confirmpass.isNotBlank() && password != confirmpass) "Passwords do not match" else null
             )
-
 
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { /* navController.navigate("home") */ },
+                onClick = { navController.navigate("login") },
+                enabled = isFormValid,
                 modifier = Modifier
                     .width(299.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF0FB2B2),
+                    containerColor = if (isFormValid) Color(0xFF0FB2B2) else Color(0xFFB0B0B0),
                     contentColor = Color.White
                 )
             ) {
@@ -174,6 +179,7 @@ fun Register(navController: NavController) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

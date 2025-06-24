@@ -12,7 +12,7 @@ fun OnboardingScreen3(navController: NavController) {
         imageRes = com.example.dermtect.R.drawable.skin_health,
         title = "Your Skin Health,\nJust a Tap Away",
         description = "Fast, simple, and secure skin\nassessments anytime.",
-        onNextClick = { navController.navigate("onboarding_screen4") }
+        onNextClick = { navController.navigate("choose_account") }
     )
 }
 

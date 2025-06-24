@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,46 +39,29 @@ import com.example.dermtect.R
 import com.example.dermtect.poppinsFont
 import com.example.dermtect.ui.theme.DermTectTheme
 import com.example.dermtect.ui.components.InputField
+import com.example.dermtect.ui.components.TopBottomBubbles
 
 
 @Composable
 fun Login(navController: NavController) {
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val isEmailValid = remember(email) { android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // Top-left bubble
-        Image(
-            painter = painterResource(id = R.drawable.bubbles_top),
-            contentDescription = "Top Left Bubble",
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .offset(x = (-24).dp, y = (-24).dp)
-                .size(200.dp)
-        )
 
-        // Bottom-right bubble
-        Image(
-            painter = painterResource(id = R.drawable.bubbles_bottom),
-            contentDescription = "Bottom Right Bubble",
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .offset(x = (24).dp, y = (24).dp)
-                .size(200.dp)
-        )
+        TopBottomBubbles()
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.Center), // 💡 centers entire column in the screen
+                .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             // Title
             Text(
                 text = "Login",
@@ -89,35 +73,54 @@ fun Login(navController: NavController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            // Email input
             InputField(
                 value = email,
                 onValueChange = { email = it },
                 placeholder = "Email",
-                iconRes = R.drawable.icon_email
+                iconRes = R.drawable.icon_email,
+                textColor = Color(0xFF1D1D1D)
             )
+
+            if (email.isNotEmpty() && !isEmailValid) {
+                Text(
+                    text = "Invalid email address",
+                    color = Color.Red,
+                    fontSize = 12.sp,
+                    modifier = Modifier
+                        .padding(start = 48.dp, top = 4.dp)
+                        .align(Alignment.Start)
+                )
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            // Password input
             InputField(
                 value = password,
                 onValueChange = { password = it },
                 placeholder = "Password",
-                iconRes = R.drawable.icon_pass
+                iconRes = R.drawable.icon_pass,
+                isPassword = true,
+                textColor = Color(0xFF1D1D1D)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Forgot Password
             Box(
                 modifier = Modifier
                     .width(299.dp)
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .clickable { navController.navigate("forgot_pass1") },
                 contentAlignment = Alignment.CenterEnd
             ) {
                 Text(
                     text = "Forgot Password?",
                     fontSize = 12.sp,
                     fontFamily = poppinsFont,
-                    color = Color(0xFF1D1D1D)
+                    color = Color(0xFF1D1D1D),
+                    textDecoration = TextDecoration.Underline
                 )
             }
 
@@ -125,14 +128,19 @@ fun Login(navController: NavController) {
 
             // Login Button
             Button(
-                onClick = { /* navController.navigate("home") */ },
+                onClick = {
+                    if (isEmailValid && password.isNotBlank()) {
+                        navController.navigate("tutorial_screen1")
+                    }
+                },
                 modifier = Modifier
                     .width(299.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF0FB2B2),
                     contentColor = Color.White
-                )
+                ),
+                enabled = isEmailValid && password.isNotBlank()
             ) {
                 Text(
                     text = "Login",
@@ -141,6 +149,7 @@ fun Login(navController: NavController) {
                     fontFamily = poppinsFont
                 )
             }
+
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
@@ -153,7 +162,7 @@ fun Login(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Image(
-                painter = painterResource(id = R.drawable.google_icon), // replace with your 36x36 icon
+                painter = painterResource(id = R.drawable.google_icon),
                 contentDescription = "Google Login",
                 modifier = Modifier.size(36.dp)
             )

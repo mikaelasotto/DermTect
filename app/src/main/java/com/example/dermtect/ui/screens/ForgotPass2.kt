@@ -73,7 +73,7 @@ fun ForgotPass2(navController: NavController) {
             PrimaryButton(
                 text = "Verify Code",
                 onClick = {
-                    // navController.navigate("forgot_pass3")
+                    navController.navigate("forgot_pass3")
                 }
             )
 
