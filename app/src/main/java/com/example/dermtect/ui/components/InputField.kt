@@ -40,9 +40,9 @@ fun InputField(
     errorMessage: String? = null,
     validateEmail: Boolean = false
 ) {
-    Column(modifier = modifier) {
-        var isPasswordVisible by remember { mutableStateOf(false) }
+    var isPasswordVisible by remember { mutableStateOf(false) }
 
+    Column(modifier = modifier) {
         TextField(
             value = value,
             onValueChange = onValueChange,
@@ -50,7 +50,10 @@ fun InputField(
                 Text(placeholder, fontFamily = poppinsFont)
             },
             singleLine = true,
-            visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+            visualTransformation = if (isPassword && !isPasswordVisible)
+                PasswordVisualTransformation()
+            else
+                VisualTransformation.None,
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = iconRes),
@@ -59,7 +62,10 @@ fun InputField(
             },
             trailingIcon = {
                 if (isPassword && togglePasswordVisibility != null) {
-                    IconButton(onClick = togglePasswordVisibility) {
+                    IconButton(onClick = {
+                        isPasswordVisible = !isPasswordVisible
+                        togglePasswordVisibility()
+                    }) {
                         Icon(
                             painter = painterResource(
                                 id = if (isPasswordVisible) R.drawable.off else R.drawable.on
@@ -67,8 +73,6 @@ fun InputField(
                             contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
                         )
                     }
-                    // Sync visibility toggle with outside state
-                    isPasswordVisible = !isPasswordVisible
                 }
             },
             textStyle = TextStyle(
@@ -77,6 +81,8 @@ fun InputField(
             ),
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
+                focusedTextColor = textColor,
+                unfocusedTextColor = textColor,
                 focusedContainerColor = Color(0xFFF0F0F0),
                 unfocusedContainerColor = Color(0xFFF0F0F0),
                 disabledContainerColor = Color(0xFFF0F0F0),
@@ -88,7 +94,6 @@ fun InputField(
                 .height(56.dp)
         )
 
-        // Inline error text
         if (!errorMessage.isNullOrBlank()) {
             Text(
                 text = errorMessage,
@@ -100,6 +105,7 @@ fun InputField(
         }
     }
 }
+
 
 
 

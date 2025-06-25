@@ -38,7 +38,11 @@ import com.example.dermtect.ui.components.InputField
 @Composable
 fun ForgotPass1(navController: NavController) {
     var email by remember { mutableStateOf("") }
-    var isEmailValid by remember { mutableStateOf(true) }
+    var emailError by remember { mutableStateOf("") }
+
+    val isEmailValid = remember(email) {
+        Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
 
     ScreenLayout {
         TopBottomBubbles()
@@ -50,7 +54,6 @@ fun ForgotPass1(navController: NavController) {
             ScreenTitle("Forgot password")
             Spacer(modifier = Modifier.height(8.dp))
             SubText("Please enter your email to reset the password")
-
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
@@ -66,11 +69,20 @@ fun ForgotPass1(navController: NavController) {
 
             InputField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = {
+                    email = it
+                    emailError = if (it.isBlank()) {
+                        "Email is required"
+                    } else if (!Patterns.EMAIL_ADDRESS.matcher(it).matches()) {
+                        "Invalid email address"
+                    } else {
+                        ""
+                    }
+                },
                 placeholder = "name@example.com",
                 iconRes = R.drawable.icon_email,
                 textColor = Color.Black,
-                validateEmail = true
+                errorMessage = emailError.takeIf { it.isNotEmpty() } // only show if not empty
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -78,15 +90,14 @@ fun ForgotPass1(navController: NavController) {
             PrimaryButton(
                 text = "Reset Password",
                 onClick = {
-                    isEmailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-                    if (isEmailValid && email.isNotBlank()) {
-                        navController.navigate("forgot_pass2")
-                    }
-                }
+                    navController.navigate("forgot_pass2")
+                },
+                enabled = isEmailValid && email.isNotBlank()
             )
         }
     }
 }
+
 
 
 @Preview(showBackground = true)

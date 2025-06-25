@@ -101,7 +101,7 @@ fun Register(navController: NavController) {
                 iconRes = R.drawable.icon_pass,
                 textColor = Color.Black,
                 isPassword = !showPassword,
-                togglePasswordVisibility = { showPassword = !showPassword },
+//                togglePasswordVisibility = { showPassword = !showPassword },
                 errorMessage = if (password.isBlank()) "Password is required" else null
             )
 
@@ -114,7 +114,7 @@ fun Register(navController: NavController) {
                 iconRes = R.drawable.icon_pass,
                 textColor = Color.Black,
                 isPassword = !showConfirmPassword,
-                togglePasswordVisibility = { showConfirmPassword = !showConfirmPassword },
+//                togglePasswordVisibility = { showConfirmPassword = !showConfirmPassword },
                 errorMessage = if (confirmpass.isNotBlank() && password != confirmpass) "Passwords do not match" else null
             )
 

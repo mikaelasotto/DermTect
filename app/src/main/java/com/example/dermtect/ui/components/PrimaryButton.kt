@@ -17,17 +17,19 @@ import com.example.dermtect.poppinsFont
 fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
-        .width(299.dp)
-        .height(50.dp)
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true // ✅ support 'enabled'
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier
+            .width(299.dp)
+            .height(50.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF0FB2B2),
+            containerColor = if (enabled) Color(0xFF0FB2B2) else Color(0xFFBDBDBD),
             contentColor = Color.White
-        )
+        ),
+        enabled = enabled // ✅ built-in control
     ) {
         Text(
             text = text,
@@ -37,3 +39,4 @@ fun PrimaryButton(
         )
     }
 }
+
