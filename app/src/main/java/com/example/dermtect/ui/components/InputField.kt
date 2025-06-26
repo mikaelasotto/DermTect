@@ -36,9 +36,7 @@ fun InputField(
     modifier: Modifier = Modifier,
     textColor: Color = Color.Black,
     isPassword: Boolean = false,
-    togglePasswordVisibility: (() -> Unit)? = null,
-    errorMessage: String? = null,
-    validateEmail: Boolean = false
+    errorMessage: String? = null
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -46,14 +44,9 @@ fun InputField(
         TextField(
             value = value,
             onValueChange = onValueChange,
-            placeholder = {
-                Text(placeholder, fontFamily = poppinsFont)
-            },
+            placeholder = { Text(placeholder, fontFamily = poppinsFont) },
             singleLine = true,
-            visualTransformation = if (isPassword && !isPasswordVisible)
-                PasswordVisualTransformation()
-            else
-                VisualTransformation.None,
+            visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = iconRes),
@@ -61,15 +54,11 @@ fun InputField(
                 )
             },
             trailingIcon = {
-                if (isPassword && togglePasswordVisibility != null) {
-                    IconButton(onClick = {
-                        isPasswordVisible = !isPasswordVisible
-                        togglePasswordVisibility()
-                    }) {
+                if (isPassword) {
+                    val icon = if (isPasswordVisible) R.drawable.off else R.drawable.on
+                    IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                         Icon(
-                            painter = painterResource(
-                                id = if (isPasswordVisible) R.drawable.off else R.drawable.on
-                            ),
+                            painter = painterResource(id = icon),
                             contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
                         )
                     }
@@ -81,8 +70,6 @@ fun InputField(
             ),
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
-                focusedTextColor = textColor,
-                unfocusedTextColor = textColor,
                 focusedContainerColor = Color(0xFFF0F0F0),
                 unfocusedContainerColor = Color(0xFFF0F0F0),
                 disabledContainerColor = Color(0xFFF0F0F0),
@@ -94,6 +81,7 @@ fun InputField(
                 .height(56.dp)
         )
 
+        // Error message display
         if (!errorMessage.isNullOrBlank()) {
             Text(
                 text = errorMessage,
@@ -105,6 +93,7 @@ fun InputField(
         }
     }
 }
+
 
 
 
