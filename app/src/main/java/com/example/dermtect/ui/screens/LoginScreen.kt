@@ -1,25 +1,20 @@
 package com.example.dermtect.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,12 +28,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.dermtect.R
 import com.example.dermtect.ui.components.BubblesBackground
 import com.example.dermtect.ui.components.InputField
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dermtect.ui.viewmodel.AuthViewModel
+import com.example.dermtect.ui.viewmodel.AuthViewModelFactory
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.collectAsState
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import androidx.compose.runtime.LaunchedEffect
+import android.widget.Toast
+
 
 
 @Composable
@@ -46,6 +50,10 @@ fun Login(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val isEmailValid = remember(email) { android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() }
+    val viewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory())
+    val authSuccess by viewModel.authSuccess.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+    val context = LocalContext.current
 
     BubblesBackground {
 
@@ -120,9 +128,7 @@ fun Login(navController: NavController) {
             // Login Button
             Button(
                 onClick = {
-                    if (isEmailValid && password.isNotBlank()) {
-                        navController.navigate("tutorial_screen1")
-                    }
+                    viewModel.login(email, password)
                 },
                 modifier = Modifier
                     .width(299.dp)
@@ -173,12 +179,41 @@ fun Login(navController: NavController) {
                 )
             }
         }
+        LaunchedEffect(authSuccess) {
+            if (authSuccess) {
+                val uid = FirebaseAuth.getInstance().currentUser?.uid
+                if (uid != null) {
+                    val db = FirebaseFirestore.getInstance()
+                    db.collection("users").document(uid).get()
+                        .addOnSuccessListener { document ->
+                            val role = document.getString("role")
+                            when (role) {
+                                "patient" -> navController.navigate("user_home")
+                                "derma" -> navController.navigate("derma_home")
+                                else -> navController.navigate("user_home")
+                            }
+                            viewModel.resetAuthSuccess()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(context, "Failed to fetch role", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+        }
+        LaunchedEffect(errorMessage) {
+            errorMessage?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                viewModel.clearError()
+            }
+        }
+
+
     }
 }
 
 
 @Preview(showBackground = true)
 @Composable
-fun Login() {
+fun LoginPreview() {
         Login(navController = rememberNavController())
 }

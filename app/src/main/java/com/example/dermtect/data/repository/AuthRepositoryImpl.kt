@@ -20,6 +20,7 @@ class AuthRepositoryImpl : AuthRepository {
                     val userData = hashMapOf(
                         "uid" to it.uid,
                         "email" to email,
+                        "role" to "patient",  // default role
                         "createdAt" to System.currentTimeMillis()
                     )
 

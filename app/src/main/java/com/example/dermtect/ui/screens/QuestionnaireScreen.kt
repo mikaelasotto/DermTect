@@ -138,7 +138,7 @@ fun QuestionnaireScreen(navController: NavController) {
                             showWarning = true
                         } else {
                             showWarning = false
-                            navController.navigate("home") // ✅ Correct navigation
+                            navController.navigate("user_home") // ✅ Correct navigation
                         }
                     },
                     modifier = Modifier

@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.dermtect.ui.screens.Register
 import com.example.dermtect.ui.screens.Login
+import com.example.dermtect.ui.screens.VerifyEmailScreen
+import com.example.dermtect.ui.screens.DermaHomeScreen
 import com.example.dermtect.ui.screens.UserHomeScreen
 import com.example.dermtect.ui.screens.QuestionnaireScreen
 import com.example.dermtect.ui.screens.NotificationScreen
@@ -31,10 +33,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             DermtectTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "register") {
+                NavHost(navController = navController, startDestination = "login") {
+                    composable("login") { Login(navController = navController) }
                     composable("register") { Register(navController = navController) }
-                    composable("login") { Login(navController) }
-                    composable("home") {UserHomeScreen(navController = navController) }
+                    composable("verify_email/{email}") { backStackEntry ->
+                        val email = backStackEntry.arguments?.getString("email")
+                        VerifyEmailScreen(navController = navController, email = email) }
+                    composable("user_home") {UserHomeScreen(navController = navController) }
+                    composable("derma_home") {DermaHomeScreen(navController = navController) }
                     composable("notifications") {NotificationScreen(navController = navController) }
                     composable("questionnaire") { QuestionnaireScreen(navController = navController)}
                     composable("highlightarticle") {HighlightArticle(navController = navController) }
