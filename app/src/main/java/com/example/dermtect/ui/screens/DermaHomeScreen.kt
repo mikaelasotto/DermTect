@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dermtect.R
 import com.example.dermtect.ui.components.TopRightNotificationIcon
@@ -40,7 +41,7 @@ fun DermaHomeScreen(navController: NavController) {
             onNotifClick = { navController.navigate("notifications") },
             modifier = Modifier
                 .align(Alignment.End)
-                .offset(x = -25.dp, y = 50.dp)
+                .offset(x = -20.dp, y = 50.dp)
         )
 
         Column(
@@ -52,52 +53,24 @@ fun DermaHomeScreen(navController: NavController) {
         ) {
 
             // Header Section
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFE6FAFB), RoundedCornerShape(10.dp))
-                    .padding(16.dp)
-            ) {
+
                 Text(
                     text = "Hello,",
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Normal)
                 )
                 Text(
                     text = "Doc Mika!",
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
+                    style = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
                     text = "Early Detection Saves Lives.",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.DarkGray)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Summary Cards Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                StatCard(
-                    title = "Pending Cases",
-                    value = "25",
-                    iconRes = R.drawable.pending_cases,
-                    modifier = Modifier.weight(1f)
-                )
-                StatCard(
-                    title = "Total Cases",
-                    value = "139",
-                    iconRes = R.drawable.total_cases,
-                    modifier = Modifier.weight(1f)
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal)
                 )
 
-            }
+            Spacer(modifier = Modifier.height(30.dp))
+            StatCardRow (onPendingCasesClick = {})
 
-            Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
             // Pending Cases Section
             Row(
@@ -135,29 +108,89 @@ fun DermaHomeScreen(navController: NavController) {
 }
 
 @Composable
-fun StatCard(title: String, value: String, iconRes: Int, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .background(Color(0xFFBDF7F8), RoundedCornerShape(16.dp))
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = title, style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+fun StatCardRow (onPendingCasesClick: () -> Unit){
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .align(Alignment.Center),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+
+            StatCard(
+                label = "Pending Cases",
+                value = "20",
+                imageRes = R.drawable.pending_cases,
+                imageCardColor = Color(0xFFD7F2D6),
+                modifier = Modifier.weight(1f)
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                painter = painterResource(id = iconRes),
-                contentDescription = null,
-                modifier = Modifier.size(28.dp),
-                tint = Color.Gray
+            StatCard(
+                label = "Total Cases",
+                value = "20",
+                imageRes = R.drawable.total_cases,
+                imageCardColor = Color(0xFFDCD2DE),
+                modifier = Modifier.weight(1f)
             )
         }
     }
+}
+
+
+@Composable
+fun StatCard(
+    value: String,
+    label: String,
+    imageRes: Int,
+    modifier: Modifier = Modifier,
+    imageCardColor: Color = Color.White,
+    onClick: () -> Unit = {}
+) {
+    Card(
+        modifier = modifier
+            .height(150.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFCDFFFF))
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        )   {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold, color = Color.DarkGray),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 20.dp)
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Medium, fontSize = 30.sp),
+                modifier = Modifier
+                    .padding(start = 15.dp)
+                    .fillMaxWidth(0.5f)
+            )
+            Card (
+                colors = CardDefaults.cardColors(containerColor = imageCardColor),
+                modifier = Modifier
+                    .size(60.dp)
+                    .align(Alignment.End)
+                    .padding(end = 10.dp, bottom = 10.dp)
+                    .offset(x = -5.dp, y = -5.dp)
+            ){
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = label,
+                modifier = Modifier
+                    .size(60.dp)
+                    .padding(10.dp)
+
+            ) }
+        }
+    }
+}
+
+fun onClick() {
+    TODO("Not yet implemented")
 }
 
 
