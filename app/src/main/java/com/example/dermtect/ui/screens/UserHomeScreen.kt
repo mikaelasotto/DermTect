@@ -41,8 +41,9 @@ fun UserHomeScreen(navController: NavController) {
                 .document(uid)
                 .get()
                 .addOnSuccessListener { document ->
-                    val name = document.getString("f_name") ?: "User"
-                    firstName = name
+                    val name = document.getString("firstName") ?: "User"
+                    firstName = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+
                 }
                 .addOnFailureListener {
                     firstName = "User"

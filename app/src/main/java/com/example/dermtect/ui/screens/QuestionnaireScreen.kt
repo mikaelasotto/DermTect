@@ -142,7 +142,7 @@ fun QuestionnaireScreen(navController: NavController) {
                         }
                     },
                     modifier = Modifier
-                        .fillMaxWidth(0.7f)
+                        .fillMaxWidth(0.8f)
                         .wrapContentHeight(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF0FB2B2),
@@ -166,7 +166,7 @@ fun QuestionnaireScreen(navController: NavController) {
                 OutlinedButton(
                     onClick = {showDialog = true },
                             modifier = Modifier
-                        .fillMaxWidth(0.7f)
+                        .fillMaxWidth(0.8f)
                         .wrapContentHeight(),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF0FB2B2)),
                     border = BorderStroke(1.dp, Color(0xFF0FB2B2))

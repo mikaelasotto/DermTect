@@ -12,7 +12,28 @@
           "package_name": "com.example.dermtect"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "50445058822-0jbhchrq2b657gt4s7ldjohr6788t9tq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dermtect",
+            "certificate_hash": "83eff6c053165a05c4377bdb0501f90a5a8c230f"
+          }
+        },
+        {
+          "client_id": "50445058822-e2o3bmb12ta5rm8p5ktk1ov95epcnuu3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dermtect",
+            "certificate_hash": "3c17e8c670ee5e9eb5bf8568397daefae120a71f"
+          }
+        },
+        {
+          "client_id": "50445058822-fn9cea4e0bduos6t0g7ofb2g9ujri5s2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBjuTwj-EhcomqpBEkOPvG8XdtD1Kaw-Bw"
@@ -20,7 +41,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "50445058822-fn9cea4e0bduos6t0g7ofb2g9ujri5s2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

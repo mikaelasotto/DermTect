@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -14,7 +15,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.dermtect.R // Make sure ic_back is in your drawable
+import com.example.dermtect.R
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun TopRightNotificationIcon(
@@ -69,3 +78,27 @@ fun BackButton(
 }
 
 
+@Composable
+fun PrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true // ✅ support 'enabled'
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth(0.8f)
+            .wrapContentHeight(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (enabled) Color(0xFF0FB2B2) else Color(0xFFBDBDBD),
+            contentColor = Color.White
+        ),
+        enabled = enabled // ✅ built-in control
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+        )
+    }
+}

@@ -8,12 +8,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.dermtect.ui.screens.Register
 import com.example.dermtect.ui.screens.Login
-import com.example.dermtect.ui.screens.VerifyEmailScreen
 import com.example.dermtect.ui.screens.DermaHomeScreen
+import com.example.dermtect.ui.screens.ForgotPass1
+import com.example.dermtect.ui.screens.ForgotPass2
+import com.example.dermtect.ui.screens.ForgotPass3
+import com.example.dermtect.ui.screens.ForgotPass4
 import com.example.dermtect.ui.screens.UserHomeScreen
 import com.example.dermtect.ui.screens.QuestionnaireScreen
 import com.example.dermtect.ui.screens.NotificationScreen
 import com.example.dermtect.ui.screens.HighlightArticle
+import com.example.dermtect.ui.screens.OnboardingScreen1
+import com.example.dermtect.ui.screens.OnboardingScreen2
+import com.example.dermtect.ui.screens.OnboardingScreen3
+import com.example.dermtect.ui.screens.SplashScreen
 import com.example.dermtect.ui.screens.TutorialScreen0
 import com.example.dermtect.ui.screens.TutorialScreen1
 import com.example.dermtect.ui.screens.TutorialScreen2
@@ -33,12 +40,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             DermtectTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "login") {
+                NavHost(navController = navController, startDestination = "register") {
+                    composable("splash") { SplashScreen(navController) }
+                    composable("onboarding_screen1") { OnboardingScreen1(navController) }
+                    composable("onboarding_screen2") { OnboardingScreen2(navController) }
+                    composable("onboarding_screen3") { OnboardingScreen3(navController) }
                     composable("login") { Login(navController = navController) }
                     composable("register") { Register(navController = navController) }
-                    composable("verify_email/{email}") { backStackEntry ->
-                        val email = backStackEntry.arguments?.getString("email")
-                        VerifyEmailScreen(navController = navController, email = email) }
+                    composable("forgot_pass1") { ForgotPass1(navController) }
+                    composable("forgot_pass2") { ForgotPass2(navController) }
+                    composable("forgot_pass3") { ForgotPass3(navController) }
+                    composable("forgot_pass3") { ForgotPass4(navController) }
                     composable("user_home") {UserHomeScreen(navController = navController) }
                     composable("derma_home") {DermaHomeScreen(navController = navController) }
                     composable("notifications") {NotificationScreen(navController = navController) }

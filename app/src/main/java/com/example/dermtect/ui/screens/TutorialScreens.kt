@@ -5,7 +5,145 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.dermtect.R
-import com.example.dermtect.ui.components.TutorialScreenTemplate
+import com.example.dermtect.ui.components.BackButton
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.*
+import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.*
+import com.example.dermtect.ui.components.ProgressIndicator
+
+@Composable
+fun TutorialScreenTemplate(
+    navController: NavController,
+    imageResId: Int,
+    title: String,
+    description: String,
+    nextRoute: String,
+    onSkipClick: () -> Unit, // ✅ fixed: added missing type + comma
+    onBackClick: (() -> Unit)? = null, // ✅ optional
+    nextButtonText: String = "Next",
+    skipButtonText: String = "Skip",
+    currentIndex: Int? = null
+
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
+        contentAlignment = Alignment.Center
+    ) {
+        // ✅ Optional back button
+        if (onBackClick != null) {
+            BackButton(
+                onClick = onBackClick,
+                modifier = Modifier
+                    .offset(x = 25.dp, y = 50.dp)
+                    .align(Alignment.TopStart)
+            )
+        }
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize(0.9f)
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()), // Add scroll support
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(80.dp)) // Leave space for back button
+
+                Image(
+                    painter = painterResource(id = imageResId),
+                    contentDescription = "Tutorial Image",
+                    modifier = Modifier
+                        .size(280.dp)
+                )
+                Spacer(modifier = Modifier.height(60.dp))
+
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.displaySmall,
+                    color = Color(0xFF1D1D1D),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal),
+                    color = Color(0xFF1D1D1D),
+                    textAlign = TextAlign.Center
+                )
+
+
+            }
+            Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                if (currentIndex != null) {
+                    ProgressIndicator(
+                        totalDots = 4,
+                        selectedIndex = currentIndex
+                    )
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+
+                    Button(
+                        onClick = { navController.navigate(nextRoute) },
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f)
+                            .wrapContentHeight(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF0FB2B2),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            nextButtonText,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedButton(
+                        onClick = onSkipClick,
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f)
+                            .wrapContentHeight(),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color(0xFF0FB2B2)
+                        ),
+                        border = BorderStroke(1.dp, Color(0xFF0FB2B2))
+                    ) {
+                        Text(
+                            skipButtonText,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal)
+                        )
+                    }
+                }
+
+            }
+    }
+}
 
 @Composable
 fun TutorialScreen0(navController: NavController) {
@@ -31,7 +169,8 @@ fun TutorialScreen1(navController: NavController) {
         description = "Take a square photo with the mole or lesion centered in the frame.",
         nextRoute = "tutorial_screen2",
         onBackClick = { navController.popBackStack() },
-        onSkipClick = { navController.navigate("user_home") }
+        onSkipClick = { navController.navigate("user_home") },
+        currentIndex = 0
     )
 }
 
@@ -44,7 +183,8 @@ fun TutorialScreen2(navController: NavController) {
         description = "Hold your camera 2–4 inches (5–10 cm) away for a clear, focused image.",
         nextRoute = "tutorial_screen3",
         onBackClick = { navController.popBackStack() },
-        onSkipClick = { navController.navigate("user_home") }
+        onSkipClick = { navController.navigate("user_home") },
+        currentIndex = 1
     )
 }
 
@@ -57,7 +197,8 @@ fun TutorialScreen3(navController: NavController) {
         description = "Make sure the skin is well-lit and free of hair, jewelry, or makeup that may block the view.",
         nextRoute = "tutorial_screen4",
         onBackClick = { navController.popBackStack() },
-        onSkipClick = { navController.navigate("user_home") }
+        onSkipClick = { navController.navigate("user_home") },
+        currentIndex = 2
     )
 }
 
@@ -70,7 +211,8 @@ fun TutorialScreen4(navController: NavController) {
         description = "After scanning, your result is saved automatically. You can track your scan history and monitor changes.",
         nextRoute = "tutorial_screen5",
         onBackClick = { navController.popBackStack() },
-        onSkipClick = { navController.navigate("user_home") }
+        onSkipClick = { navController.navigate("user_home") },
+        currentIndex = 3
     )
 }
 

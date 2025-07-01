@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.font.FontWeight
 import com.example.dermtect.R
 
 
@@ -50,10 +51,11 @@ fun InputField(
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = iconRes),
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
                 )
             },
-            trailingIcon = {
+                    trailingIcon = {
                 if (isPassword) {
                     val icon = if (isPasswordVisible) R.drawable.off else R.drawable.on
                     IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
@@ -65,18 +67,20 @@ fun InputField(
                     }
                 }
             },
+
             textStyle = TextStyle(
-                color = textColor
+                color = textColor,
+                fontWeight = FontWeight.Normal
             ),
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF0F0F0),
-                unfocusedContainerColor = Color(0xFFF0F0F0),
-                disabledContainerColor = Color(0xFFF0F0F0),
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                focusedContainerColor = Color(0xFFFFFFFF),      // light soft gray
+                unfocusedContainerColor = Color(0xFFF7F7F7),    // subtle contrast
+                disabledContainerColor = Color(0xFFF0F0F0),     // light gray for disabled
+                focusedIndicatorColor = Color.Transparent,      // your brand teal
+                unfocusedIndicatorColor = Color.Transparent     // very subtle gray
             ),
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth(0.85f)
                 .height(56.dp)
         )
