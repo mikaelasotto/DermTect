@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,8 +19,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.dermtect.poppinsFont
 
 
 @Composable
@@ -71,12 +70,10 @@ fun CodeInputBoxes(
             ) {
                 Text(
                     text = char,
-                    fontSize = 20.sp,
-                    fontFamily = poppinsFont,
+                    style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Center
                 )
             }
         }
     }
 }
-
