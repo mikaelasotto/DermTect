@@ -17,6 +17,9 @@ class AuthViewModel(private val authUseCase: AuthUseCase) : ViewModel() {
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     private val _authSuccess = MutableStateFlow(false)
     val authSuccess: StateFlow<Boolean> = _authSuccess
 
@@ -42,6 +45,9 @@ class AuthViewModel(private val authUseCase: AuthUseCase) : ViewModel() {
                 Log.e("AuditLog", "Failed to log audit event: ${it.message}")
             }
     }
+
+    private val _navigateToHome = MutableStateFlow(false)
+    val navigateToHome: StateFlow<Boolean> = _navigateToHome
 
 
     fun register(email: String, password: String, firstName: String, lastName: String) {
@@ -99,10 +105,11 @@ class AuthViewModel(private val authUseCase: AuthUseCase) : ViewModel() {
     }
 
     fun login(email: String, password: String) {
-        _loading.value = true
+        _isLoading.value = true
+
         authUseCase.loginUser(email, password)
             .addOnCompleteListener { task ->
-                _loading.value = false
+                _isLoading.value = false
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     user?.reload()?.addOnCompleteListener { reloadTask ->
@@ -115,6 +122,8 @@ class AuthViewModel(private val authUseCase: AuthUseCase) : ViewModel() {
                                     .addOnSuccessListener {
                                         logAudit(user.uid, user.email, "login")
                                         _authSuccess.value = true
+                                        _isLoading.value = false
+                                        _navigateToHome.value = true
                                     }
                                     .addOnFailureListener {
                                         _errorMessage.value = "Verified but failed to update Firestore."
@@ -179,7 +188,9 @@ class AuthViewModel(private val authUseCase: AuthUseCase) : ViewModel() {
                 }
             }
     }
-
+    fun markNavigationDone() {
+        _navigateToHome.value = false
+    }
     fun logout() {
         val user = auth.currentUser
         logAudit(user?.uid, user?.email, "logout")

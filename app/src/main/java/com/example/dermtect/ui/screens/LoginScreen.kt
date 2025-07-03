@@ -50,6 +50,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.dermtect.ui.components.DialogTemplate
+import com.example.dermtect.ui.components.GifImage
 
 @Composable
 fun Login(navController: NavController) {
@@ -67,6 +69,7 @@ fun Login(navController: NavController) {
         .requestEmail()
         .build()
     val googleSignInClient = GoogleSignIn.getClient(context, gso)
+    val isLoading by viewModel.isLoading.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -272,6 +275,27 @@ fun Login(navController: NavController) {
                     viewModel.clearError()
                 }
             }
+            val navigateToHome by viewModel.navigateToHome.collectAsState()
+
+            LaunchedEffect(navigateToHome) {
+                if (navigateToHome) {
+                    navController.navigate("user_home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                    viewModel.markNavigationDone()
+                }
+            }
+
+            DialogTemplate(
+                show = isLoading,
+                title = "Logging you in",
+                description = "Please wait ...",
+                imageContent = {
+                    GifImage(resId = R.drawable.loader, size = 150)
+                },
+                onDismiss = {},
+                autoDismiss = false
+            )
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -17,6 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
+import coil.compose.AsyncImage
+import coil.decode.GifDecoder
+import coil.request.ImageRequest
 import com.example.dermtect.R
 import kotlinx.coroutines.delay
 
@@ -27,6 +32,7 @@ fun DialogTemplate(
     title: String,
     description: String? = null,
     imageResId: Int? = null,
+    imageContent: (@Composable () -> Unit)? = null,
     primaryText: String? = null,
     onPrimary: (() -> Unit)? = null,
     secondaryText: String? = null,
@@ -63,7 +69,10 @@ fun DialogTemplate(
                         color = Color(0xFF0FB2B2)
                     )
 
-                    imageResId?.let {
+                    imageContent?.let {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        it()
+                    } ?: imageResId?.let {
                         Spacer(modifier = Modifier.height(10.dp))
                         Image(
                             painter = painterResource(id = it),
@@ -71,6 +80,7 @@ fun DialogTemplate(
                             modifier = Modifier.size(150.dp)
                         )
                     }
+
 
                     description?.let {
                         Spacer(modifier = Modifier.height(12.dp))
