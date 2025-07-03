@@ -44,7 +44,7 @@ fun TutorialScreenTemplate(
             BackButton(
                 onClick = onBackClick,
                 modifier = Modifier
-                    .offset(x = 25.dp, y = 50.dp)
+                    .padding(top = 50.dp, start = 25.dp)
                     .align(Alignment.TopStart)
             )
         }
@@ -100,7 +100,7 @@ fun TutorialScreenTemplate(
 
                 if (currentIndex != null) {
                     ProgressIndicator(
-                        totalDots = 4,
+                        totalDots = 5,
                         selectedIndex = currentIndex
                     )
                 }
@@ -225,7 +225,8 @@ fun TutorialScreen5(navController: NavController) {
         description = "Generate your PDF report anytime — and use the clinic locator to find a nearby dermatologist.",
         nextRoute = "questionnaire",
         onBackClick = { navController.popBackStack() },
-        onSkipClick = { navController.navigate("user_home") }
+        onSkipClick = { navController.navigate("user_home") },
+        currentIndex = 3
     )
 }
 

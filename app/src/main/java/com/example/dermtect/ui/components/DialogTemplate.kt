@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.dermtect.R
 import kotlinx.coroutines.delay
 
+
 @Composable
 fun DialogTemplate(
     show: Boolean,

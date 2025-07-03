@@ -1,5 +1,6 @@
 package com.example.dermtect.ui.screens
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,45 +23,71 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.dermtect.R
+import com.example.dermtect.ui.components.PrivacyConsentDialog
+import com.example.dermtect.ui.components.saveConsent
 import com.example.dermtect.ui.components.TopRightNotificationIcon
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun UserHomeScreen(navController: NavController) {
 
-    var firstName by remember { mutableStateOf("Mikaela") }
+    val auth = FirebaseAuth.getInstance()
+    val userId = auth.currentUser?.uid ?: ""
+
+    val coroutineScope = rememberCoroutineScope()
+    var showConsentDialog by remember { mutableStateOf(false) }
+    var hasCheckedConsent by remember { mutableStateOf(false) }
+    var hasConsented by remember { mutableStateOf(false) }
+    var firstName by remember { mutableStateOf("User") }
+
+    val db = FirebaseFirestore.getInstance()
+    var pendingCameraAction by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
-        if (uid != null) {
-            FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(uid)
-                .get()
-                .addOnSuccessListener { document ->
-                    val name = document.getString("firstName") ?: "User"
-                    firstName = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-
-                }
-                .addOnFailureListener {
-                    firstName = "User"
-                }
+        if (userId.isNotEmpty()) {
+            val userDoc = db.collection("users").document(userId).get().await()
+            firstName = userDoc.getString("firstName")?.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase() else it.toString()
+            } ?: "User"
         }
     }
+
+    // Check Consent on Launch
+    LaunchedEffect(userId) {
+        if (userId.isNotEmpty() && !hasCheckedConsent) {
+            val userDoc = db.collection("users").document(userId).get().await()
+            val consent = userDoc.getBoolean("privacyConsent") == true
+            hasConsented = consent             // ✅ set state to be reused anywhere
+            showConsentDialog = !consent       // ✅ show dialog only if not yet consented
+            hasCheckedConsent = true
+        }
+    }
+
 
     Column(modifier = Modifier
         .fillMaxSize()
         .background(Color.White)) {
 
-            TopRightNotificationIcon(
-                onNotifClick = { navController.navigate("notifications") },
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .offset(x = -20.dp, y = 50.dp)
-            )
+        TopRightNotificationIcon(
+            onNotifClick = {
+                if (!hasConsented) {
+                    showConsentDialog = true
+                    return@TopRightNotificationIcon
+                }
+                navController.navigate("notifications")
+            },
+            modifier = Modifier
+                .padding(top = 50.dp, end = 25.dp)
+                .align(Alignment.End)
+        )
+
+
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -69,22 +96,26 @@ fun UserHomeScreen(navController: NavController) {
             horizontalAlignment = Alignment.Start
         ) {
 
-
-                Text(
-                    text = "Hello,",
-                    style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Normal)
-                )
-                Text(
-                    text = "$firstName!",
-                    style = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold)
-                )
-                Text(
-                    text = "Early Detection Saves Lives.",
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal)
-                )
+            Text(
+                text = "Hello,",
+                style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Normal)
+            )
+            Text(
+                text = "$firstName!",
+                style = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold)
+            )
+            Text(
+                text = "Early Detection Saves Lives.",
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal)
+            )
 
             Spacer(modifier = Modifier.height(30.dp))
-            HomeFeatureButtonsRow(onSkinReportClick = { navController.navigate("questionnaire") })
+            HomeFeatureButtonsRow(
+                hasConsented = hasConsented,
+                onShowConsentDialog = { showConsentDialog = true },
+                onSkinReportClick = { navController.navigate("questionnaire") }
+            )
+
             Spacer(modifier = Modifier.height(20.dp))
             HighlightCard(onHighlightClick = { navController.navigate("highlightarticle") })
             Spacer(modifier = Modifier.height(10.dp))
@@ -93,12 +124,45 @@ fun UserHomeScreen(navController: NavController) {
             NewsCarousel(newsItems = sampleNews)
         }
 
-        BottomNavBar(navController = navController, modifier = Modifier.fillMaxWidth())
+        BottomNavBar(
+            navController = navController,
+            hasConsented = hasConsented,
+            onShowConsentDialog = {
+                pendingCameraAction = true
+                showConsentDialog = true
+            },
+            setPendingCameraAction = { pendingCameraAction = it },
+            coroutineScope = coroutineScope,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        if (showConsentDialog) {
+            PrivacyConsentDialog(
+                show = showConsentDialog,
+                onConsent = {
+                    coroutineScope.launch {
+                        saveConsent(userId)                      // Save to Firestore
+                        hasConsented = true                      // ✅ Mark as consented
+                        showConsentDialog = false                // ✅ Hide dialog forever
+                    }
+                },
+                onDecline = {
+                    showConsentDialog = false                    // Just hide dialog, no access to other features
+                }
+            )
+
+        }
     }
 }
 
+
 @Composable
-fun HomeFeatureButtonsRow(onSkinReportClick: () -> Unit){
+fun HomeFeatureButtonsRow(
+    hasConsented: Boolean,
+    onShowConsentDialog: () -> Unit,
+    onSkinReportClick: () -> Unit
+) {
+
     Box(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -110,12 +174,27 @@ fun HomeFeatureButtonsRow(onSkinReportClick: () -> Unit){
                 label = "Skin Report",
                 imageRes = R.drawable.skin_report,
                 modifier = Modifier.weight(1f),
-                onClick = onSkinReportClick
+                onClick = {
+                    if (!hasConsented) {
+                        onShowConsentDialog()
+                        return@HomeFeatureButton
+                    }
+                    onSkinReportClick()
+                }
+
             )
             HomeFeatureButton(
                 label = "Nearby Clinics",
                 imageRes = R.drawable.nearby_clinics,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    if (!hasConsented) {
+                        onShowConsentDialog()
+                        return@HomeFeatureButton
+                    }
+                    // TODO: Add clinic navigation
+                }
+
             )
         }
     }
@@ -242,7 +321,15 @@ fun NewsCarousel(newsItems: List<NewsItem>) {
 }
 
 @Composable
-fun BottomNavBar(navController: NavController, modifier: Modifier = Modifier) {
+fun BottomNavBar(
+    navController: NavController,
+    hasConsented: Boolean,
+    onShowConsentDialog: () -> Unit,
+    setPendingCameraAction: (Boolean) -> Unit,
+    coroutineScope: CoroutineScope,
+    modifier: Modifier = Modifier
+) {
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -272,11 +359,19 @@ fun BottomNavBar(navController: NavController, modifier: Modifier = Modifier) {
                 Image(
                     painter = painterResource(id = R.drawable.user_vector),
                     contentDescription = "Profile",
-                    modifier = Modifier.size(26.dp)
+                    modifier = Modifier
+                        .size(26.dp)
+                        .clickable {
+                            if (!hasConsented) {
+                                onShowConsentDialog()
+                                return@clickable
+                            }
+                            // navController.navigate("profile")
+                        }
                 )
+
             }
         }
-
         // ✅ Floating Camera Icon with Navigation
         Box(
             modifier = Modifier
@@ -285,8 +380,39 @@ fun BottomNavBar(navController: NavController, modifier: Modifier = Modifier) {
                 .size(60.dp)
                 .background(Color(0xFF0FB2B2), shape = CircleShape)
                 .border(5.dp, Color.White, shape = CircleShape)
-                .clickable { navController.navigate("tutorial_screen0") },
-            contentAlignment = Alignment.Center
+                .clickable {
+                    if (!hasConsented) {
+                        setPendingCameraAction(true)
+                        onShowConsentDialog()
+                        return@clickable
+                    }
+
+                    coroutineScope.launch {
+                        val uid = FirebaseAuth.getInstance().currentUser?.uid
+                        if (uid == null) {
+                            navController.navigate("tutorial_screen0")
+                            return@launch
+                        }
+
+                        try {
+                            val document = FirebaseFirestore.getInstance()
+                                .collection("questionnaires")
+                                .document(uid)
+                                .get()
+                                .await()
+
+                            if (document.exists()) {
+                                navController.navigate("tutorial_screen1")
+                            } else {
+                                navController.navigate("tutorial_screen0")
+                            }
+                        } catch (_: Exception) {
+                            navController.navigate("tutorial_screen0")
+                        }
+                    }
+                },
+
+                    contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.camera_vector),
