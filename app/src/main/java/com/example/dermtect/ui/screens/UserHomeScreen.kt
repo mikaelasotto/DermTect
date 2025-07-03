@@ -1,6 +1,7 @@
 package com.example.dermtect.ui.screens
 
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,47 +26,37 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.dermtect.R
-import com.example.dermtect.ui.components.PrivacyConsentDialog
-import com.example.dermtect.ui.components.saveConsent
 import com.example.dermtect.ui.components.TopRightNotificationIcon
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.CoroutineScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dermtect.ui.viewmodel.UserHomeViewModel
+import com.example.dermtect.model.NewsItem
+import com.google.gson.Gson
+
 
 @Composable
 fun UserHomeScreen(navController: NavController) {
 
-    val auth = FirebaseAuth.getInstance()
-    val userId = auth.currentUser?.uid ?: ""
-
-    val coroutineScope = rememberCoroutineScope()
+    val viewModel: UserHomeViewModel = viewModel()
     var showConsentDialog by remember { mutableStateOf(false) }
-    var hasCheckedConsent by remember { mutableStateOf(false) }
-    var hasConsented by remember { mutableStateOf(false) }
-    var firstName by remember { mutableStateOf("User") }
-
-    val db = FirebaseFirestore.getInstance()
+    val firstName by viewModel.firstName.collectAsState()
+    val hasConsented by viewModel.hasConsented.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    val consentChecked by viewModel.consentChecked.collectAsState()
     var pendingCameraAction by remember { mutableStateOf(false) }
-
+    val newsItems by viewModel.newsItems.collectAsState()
+    val isLoadingNews by viewModel.isLoadingNews.collectAsState()
+    val gson = remember { Gson() }
     LaunchedEffect(Unit) {
-        if (userId.isNotEmpty()) {
-            val userDoc = db.collection("users").document(userId).get().await()
-            firstName = userDoc.getString("firstName")?.replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase() else it.toString()
-            } ?: "User"
-        }
+        viewModel.fetchUserInfo()
+        viewModel.checkConsentStatus()
+        viewModel.fetchNews()
     }
 
-    // Check Consent on Launch
-    LaunchedEffect(userId) {
-        if (userId.isNotEmpty() && !hasCheckedConsent) {
-            val userDoc = db.collection("users").document(userId).get().await()
-            val consent = userDoc.getBoolean("privacyConsent") == true
-            hasConsented = consent             // ✅ set state to be reused anywhere
-            showConsentDialog = !consent       // ✅ show dialog only if not yet consented
-            hasCheckedConsent = true
+    LaunchedEffect(consentChecked, hasConsented) {
+        if (consentChecked && !hasConsented) {
+            showConsentDialog = true
         }
     }
 
@@ -117,11 +108,53 @@ fun UserHomeScreen(navController: NavController) {
             )
 
             Spacer(modifier = Modifier.height(20.dp))
-            HighlightCard(onHighlightClick = { navController.navigate("highlightarticle") })
+            HighlightCard(onHighlightClick = {
+                val highlightItem = NewsItem( //sample lang
+                    imageResId = R.drawable.sample_skin,
+                    title = "Skin Tone & Cancer Risk",
+                    description =
+                            "Skin cancer is among the most prevalent cancers globally, with millions of new cases diagnosed each year. While much attention has been given to sun protection, the role of skin tone in cancer risk is often overlooked.Individuals with lighter skin tones have less melanin, making them more vulnerable to ultraviolet (UV) radiation damage. This can increase the chances of developing basal cell carcinoma, squamous cell carcinoma, or melanoma. However, having a darker skin tone doesn’t make one immune — it often leads to delayed diagnoses because early signs are harder to detect.Dermatologists emphasize the importance of regular skin checks for everyone, regardless of skin color. Using sunscreen with at least SPF 30, avoiding tanning beds, and wearing protective clothing are essential preventive steps.Understanding your unique risk factors, including skin tone, is the first step toward early detection and treatment. Awareness saves lives, and it's time to include all skin types in the conversation" +
+                            "Skin cancer is among the most prevalent cancers globally, with millions of new cases diagnosed each year. While much attention has been given to sun protection, the role of skin tone in cancer risk is often overlooked.Individuals with lighter skin tones have less melanin, making them more vulnerable to ultraviolet (UV) radiation damage. This can increase the chances of developing basal cell carcinoma, squamous cell carcinoma, or melanoma. However, having a darker skin tone doesn’t make one immune — it often leads to delayed diagnoses because early signs are harder to detect.Dermatologists emphasize the importance of regular skin checks for everyone, regardless of skin color. Using sunscreen with at least SPF 30, avoiding tanning beds, and wearing protective clothing are essential preventive steps.Understanding your unique risk factors, including skin tone, is the first step toward early detection and treatment. Awareness saves lives, and it's time to include all skin types in the conversation.",
+                    source = "Health Times",
+                    date = "2025-07-02"
+                )
+                val json = Uri.encode(Gson().toJson(highlightItem))
+                navController.navigate("highlightarticle/$json")
+            })
+
             Spacer(modifier = Modifier.height(10.dp))
             NewsSection()
             Spacer(modifier = Modifier.height(10.dp))
-            NewsCarousel(newsItems = sampleNews)
+            when {
+                isLoadingNews -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                newsItems.isEmpty() -> {
+                    Text(
+                        text = "No news available at the moment.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+                else -> {
+                    NewsCarousel(
+                        newsItems = newsItems,
+                        onItemClick = { item ->
+                            val json = Uri.encode(gson.toJson(item))
+                            navController.navigate("article_detail_screen/$json")
+                        }
+                    )
+
+                }
+            }
+
         }
 
         BottomNavBar(
@@ -133,18 +166,17 @@ fun UserHomeScreen(navController: NavController) {
             },
             setPendingCameraAction = { pendingCameraAction = it },
             coroutineScope = coroutineScope,
+            viewModel = viewModel, // ✅ add this
             modifier = Modifier.fillMaxWidth()
         )
 
-        if (showConsentDialog) {
+
+        if (showConsentDialog && !hasConsented) {
             PrivacyConsentDialog(
-                show = showConsentDialog,
+        show = showConsentDialog,
                 onConsent = {
-                    coroutineScope.launch {
-                        saveConsent(userId)                      // Save to Firestore
-                        hasConsented = true                      // ✅ Mark as consented
-                        showConsentDialog = false                // ✅ Hide dialog forever
-                    }
+                    viewModel.saveUserConsent()
+                    showConsentDialog = false // just UI trigger
                 },
                 onDecline = {
                     showConsentDialog = false                    // Just hide dialog, no access to other features
@@ -232,7 +264,6 @@ fun HomeFeatureButton(
         }
     }
 }
-
 @Composable
 fun HighlightCard(onHighlightClick: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -240,8 +271,10 @@ fun HighlightCard(onHighlightClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth(0.9f)
                 .align(Alignment.Center)
-                .clickable { onHighlightClick() },
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF2E8))
+                .clickable { onHighlightClick() }, // ✅ add comma here
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFFFF2E8)
+            ),
         ) {
             Row(
                 modifier = Modifier.padding(15.dp),
@@ -277,16 +310,8 @@ fun NewsSection(modifier: Modifier = Modifier) {
     }
 }
 
-data class NewsItem(val imageRes: Int, val title: String, val description: String)
-
-val sampleNews = listOf(
-    NewsItem(R.drawable.news1, "What is the UV Index?", "Learn how UV levels affect your skin health."),
-    NewsItem(R.drawable.news1, "Protect Your Skin Today", "Top dermatologist tips for sun protection."),
-    NewsItem(R.drawable.news1, "Check UV Levels Near You", "Stay safe: Know your area's UV index daily.")
-)
-
 @Composable
-fun NewsCarousel(newsItems: List<NewsItem>) {
+fun NewsCarousel(newsItems: List<NewsItem>, onItemClick: (NewsItem) -> Unit) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         contentPadding = PaddingValues(start = 10.dp, end = 10.dp)
@@ -295,30 +320,38 @@ fun NewsCarousel(newsItems: List<NewsItem>) {
             Card(
                 modifier = Modifier
                     .width(200.dp)
-                    .height(150.dp),
+                    .clickable { onItemClick(item) },
                 shape = RoundedCornerShape(8.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
-                Image(
-                    painter = painterResource(id = item.imageRes),
-                    contentDescription = item.title,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(70.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                )
+                item.imageResId?.let { resId ->
+                    Image(
+                        painter = painterResource(id = resId),
+                        contentDescription = item.title,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(70.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                    )
+                }
+
                 Text(
                     text = item.title,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 )
+
                 Text(
                     text = item.description,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                 )
             }
         }
     }
 }
+
+
 
 @Composable
 fun BottomNavBar(
@@ -327,6 +360,7 @@ fun BottomNavBar(
     onShowConsentDialog: () -> Unit,
     setPendingCameraAction: (Boolean) -> Unit,
     coroutineScope: CoroutineScope,
+    viewModel: UserHomeViewModel, // ✅ add this
     modifier: Modifier = Modifier
 ) {
 
@@ -388,24 +422,9 @@ fun BottomNavBar(
                     }
 
                     coroutineScope.launch {
-                        val uid = FirebaseAuth.getInstance().currentUser?.uid
-                        if (uid == null) {
-                            navController.navigate("tutorial_screen0")
-                            return@launch
-                        }
-
                         try {
-                            val document = FirebaseFirestore.getInstance()
-                                .collection("questionnaires")
-                                .document(uid)
-                                .get()
-                                .await()
-
-                            if (document.exists()) {
-                                navController.navigate("tutorial_screen1")
-                            } else {
-                                navController.navigate("tutorial_screen0")
-                            }
+                            val answered = viewModel.hasAnsweredQuestionnaire()
+                            navController.navigate(if (answered) "tutorial_screen1" else "tutorial_screen0")
                         } catch (_: Exception) {
                             navController.navigate("tutorial_screen0")
                         }

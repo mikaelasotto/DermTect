@@ -1,6 +1,5 @@
 package com.example.dermtect.ui.screens
 
-import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -21,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.dermtect.R
@@ -37,7 +35,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.delay
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.foundation.interaction.MutableInteractionSource
 
@@ -300,7 +297,7 @@ fun Register(navController: NavController) {
                     title = "Check Your Email!",
                     description = buildAnnotatedString {
                         append("A verification email has been sent to\n")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold,)) {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append(email)
                         }
                         append("\nPlease verify before logging in.")

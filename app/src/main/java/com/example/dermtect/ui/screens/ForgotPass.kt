@@ -1,8 +1,6 @@
 package com.example.dermtect.ui.screens
 
 import android.util.Patterns
-import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,9 +41,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Alignment
 import com.example.dermtect.ui.components.BackButton
-import com.example.dermtect.ui.components.CodeInputBoxes
-
-
 
 
 @Composable

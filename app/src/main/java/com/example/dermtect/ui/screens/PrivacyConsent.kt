@@ -1,4 +1,4 @@
-package com.example.dermtect.ui.components
+package com.example.dermtect.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -17,8 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun PrivacyConsentDialog(
@@ -146,16 +144,3 @@ fun PrivacyConsentContent(
     }
 }
 
-fun checkPrivacyConsent(uid: String, onResult: (Boolean) -> Unit) {
-    FirebaseFirestore.getInstance().collection("users").document(uid)
-        .get()
-        .addOnSuccessListener { document ->
-            val consent = document.getBoolean("privacyConsent") ?: false
-            onResult(consent)
-        }
-}
-
-fun saveConsent(uid: String) {
-    FirebaseFirestore.getInstance().collection("users").document(uid)
-        .update("privacyConsent", true)
-}
