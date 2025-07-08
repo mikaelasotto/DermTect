@@ -68,7 +68,7 @@ fun NotificationScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFEAFDFD))
+            .background(Color(0xFFCDFFFF))
     ) {
         BackButton(
             onClick = { navController.popBackStack() },
