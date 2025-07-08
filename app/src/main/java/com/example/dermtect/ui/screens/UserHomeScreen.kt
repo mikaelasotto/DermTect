@@ -392,7 +392,7 @@ fun BottomNavBar(
                 )
                 Image(
                     painter = painterResource(id = R.drawable.user_vector),
-                    contentDescription = "Profile",
+                    contentDescription = "Settings",
                     modifier = Modifier
                         .size(26.dp)
                         .clickable {
@@ -400,7 +400,7 @@ fun BottomNavBar(
                                 onShowConsentDialog()
                                 return@clickable
                             }
-                            // navController.navigate("profile")
+                            navController.navigate("profile")
                         }
                 )
 

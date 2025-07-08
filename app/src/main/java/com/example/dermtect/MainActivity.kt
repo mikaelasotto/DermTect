@@ -7,6 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.dermtect.model.NewsItem
+import com.example.dermtect.ui.components.FindClinic1Screen
+import com.example.dermtect.ui.components.FindClinic2Screen
+import com.example.dermtect.ui.screens.AboutScreen
 import com.example.dermtect.ui.screens.ArticleDetailScreen
 import com.example.dermtect.ui.screens.Register
 import com.example.dermtect.ui.screens.Login
@@ -16,12 +19,15 @@ import com.example.dermtect.ui.screens.ForgotPass2
 import com.example.dermtect.ui.screens.ForgotPass3
 import com.example.dermtect.ui.screens.ForgotPass4
 import com.example.dermtect.ui.screens.HighlightArticle
+import com.example.dermtect.ui.screens.MedicureClinicScreen
 import com.example.dermtect.ui.screens.UserHomeScreen
 import com.example.dermtect.ui.screens.QuestionnaireScreen
 import com.example.dermtect.ui.screens.NotificationScreen
 import com.example.dermtect.ui.screens.OnboardingScreen1
 import com.example.dermtect.ui.screens.OnboardingScreen2
 import com.example.dermtect.ui.screens.OnboardingScreen3
+import com.example.dermtect.ui.screens.OrtizClinicScreen
+import com.example.dermtect.ui.screens.SettingsScreen
 import com.example.dermtect.ui.screens.SplashScreen
 import com.example.dermtect.ui.screens.TutorialScreen0
 import com.example.dermtect.ui.screens.TutorialScreen1
@@ -29,6 +35,11 @@ import com.example.dermtect.ui.screens.TutorialScreen2
 import com.example.dermtect.ui.screens.TutorialScreen3
 import com.example.dermtect.ui.screens.TutorialScreen4
 import com.example.dermtect.ui.screens.TutorialScreen5
+import com.example.dermtect.ui.screens.ProfileScreen
+import com.example.dermtect.ui.screens.SkinBenefitClinicScreen
+import com.example.dermtect.ui.screens.SkinHealthClinicScreen
+import com.example.dermtect.ui.screens.VMClinicScreen
+import com.example.dermtect.ui.screens.VitalityClinicScreen
 import com.example.dermtect.ui.theme.DermtectTheme
 import com.google.firebase.FirebaseApp
 import com.google.gson.Gson
@@ -43,7 +54,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             DermtectTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "splash") {
+                NavHost(navController = navController, startDestination = "settings") {
                     composable("splash") { SplashScreen(navController) }
                     composable("onboarding_screen1") { OnboardingScreen1(navController) }
                     composable("onboarding_screen2") { OnboardingScreen2(navController) }
@@ -76,6 +87,19 @@ class MainActivity : ComponentActivity() {
                     composable("tutorial_screen3") { TutorialScreen3(navController) }
                     composable("tutorial_screen4") { TutorialScreen4(navController) }
                     composable("tutorial_screen5") { TutorialScreen5(navController) }
+                    composable("settings") { SettingsScreen(navController) }
+                    composable("profile") { ProfileScreen(navController) }
+                    composable("about") { AboutScreen(navController) }
+                    composable("clinic1") { FindClinic1Screen(navController) }
+                    composable("clinic2") { FindClinic2Screen(navController) }
+                    composable("medicure") { MedicureClinicScreen(navController) }
+                    composable("vitality") { VitalityClinicScreen(navController) }
+                    composable("skin_health") { SkinHealthClinicScreen(navController) }
+                    composable("vm") { VMClinicScreen(navController) }
+                    composable("ortiz") { OrtizClinicScreen(navController) }
+                    composable("skin_benefit") { SkinBenefitClinicScreen(navController) }
+
+
                 }
 
             }
