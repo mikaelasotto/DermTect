@@ -41,12 +41,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Alignment
 import com.example.dermtect.ui.components.BackButton
+import com.google.firebase.auth.FirebaseAuth
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import android.net.Uri
+
+
 
 
 @Composable
 fun ForgotPass1(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     val isEmailValid = remember(email) {
         Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -94,17 +103,35 @@ fun ForgotPass1(navController: NavController) {
                 placeholder = "name@example.com",
                 iconRes = R.drawable.icon_email,
                 textColor = Color.Black,
-                errorMessage = emailError.takeIf { it.isNotEmpty() } // only show if not empty
+                errorMessage = emailError.takeIf { it.isNotEmpty() }
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
             PrimaryButton(
-                text = "Reset Password",
+                text = if (isLoading) "Sending..." else "Reset Password",
                 onClick = {
-                    navController.navigate("forgot_pass2")
+                    isLoading = true
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                        .addOnCompleteListener { task ->
+                            isLoading = false
+                            if (task.isSuccessful) {
+                                Toast.makeText(
+                                    context,
+                                    "Reset link sent to $email",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                navController.navigate("forgot_pass2?email=${Uri.encode(email)}")
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    task.exception?.message ?: "Something went wrong",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
                 },
-                enabled = isEmailValid && email.isNotBlank()
+                enabled = isEmailValid && email.isNotBlank() && !isLoading
             )
         }
     }
@@ -112,21 +139,19 @@ fun ForgotPass1(navController: NavController) {
 
 
 @Composable
-fun ForgotPass2(navController: NavController) {
-    val codeLength = 5
-    var fullCode by remember { mutableStateOf("") }
-
+fun ForgotPass2(navController: NavController, email: String) {
     var resendStatus by remember { mutableStateOf<String?>(null) }
     var isResendClickable by remember { mutableStateOf(true) }
     var triggerResend by remember { mutableStateOf(false) }
 
     BubblesBackground {
-
         BackButton(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier.offset(x = 25.dp, y = 50.dp)
-                    .align(Alignment.TopStart)
-            )
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .offset(x = 25.dp, y = 50.dp)
+                .align(Alignment.TopStart)
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -135,35 +160,31 @@ fun ForgotPass2(navController: NavController) {
         ) {
             ScreenTitle("Check your email")
             Spacer(modifier = Modifier.height(8.dp))
-            SubText("We sent a reset link to example@email.com\nEnter the 5-digit code mentioned in the email")
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // 👇 Fluid Input Code Boxes
-            FluidCodeInput(
-                code = fullCode,
-                onCodeChange = { fullCode = it.take(codeLength) },
-                count = codeLength
-            )
+            SubText("We sent a password reset link to $email.\nPlease check your inbox.")
 
             Spacer(modifier = Modifier.height(32.dp))
 
             PrimaryButton(
-                text = "Verify Code",
-                enabled = fullCode.length == codeLength,
+                text = "Back to Login",
                 onClick = {
-                    navController.navigate("forgot_pass3")
+                    navController.navigate("login") {
+                        popUpTo("forgot_pass1") { inclusive = true }
+                    }
                 }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Resend option
             ResendEmailText(
                 onResendClick = {
                     if (isResendClickable) {
-                        resendStatus = "Code resent!"
+                        resendStatus = "Reset email resent!"
                         isResendClickable = false
                         triggerResend = true
+
+                        // TODO: Trigger Firebase resend email logic here
                     }
                 }
             )
@@ -190,92 +211,43 @@ fun ForgotPass2(navController: NavController) {
 }
 
 
-
-
-@Composable
-fun FluidCodeInput(
-    code: String,
-    onCodeChange: (String) -> Unit,
-    count: Int = 5,
-    boxSize: Dp = 56.dp,
-    boxSpacing: Dp = 20.dp
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        BasicTextField(
-            value = code,
-            onValueChange = {
-                if (it.length <= count && it.all { c -> c.isDigit() }) {
-                    onCodeChange(it)
-                }
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            decorationBox = {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(boxSpacing),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    for (i in 0 until count) {
-                        val char = code.getOrNull(i)?.toString() ?: ""
-                        Box(
-                            modifier = Modifier
-                                .size(boxSize)
-                                .border(
-                                    width = 2.dp,
-                                    color = Color(0xFF648DDB),
-                                    shape = RoundedCornerShape(8.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = char,
-                                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Normal),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                }
-            }
-        )
-    }
-}
-
-
 @Composable
 fun ForgotPass3(navController: NavController) {
     BubblesBackground {
         BackButton(
             onClick = { navController.popBackStack() },
-            modifier = Modifier.offset(x = 25.dp, y = 50.dp)
+            modifier = Modifier
+                .offset(x = 25.dp, y = 50.dp)
                 .align(Alignment.TopStart)
         )
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ScreenTitle(title = "Password Reset")
-
+            ScreenTitle("Check your email")
             Spacer(modifier = Modifier.height(8.dp))
 
             SubText(
-                text = "Your password has been successfully reset.\nClick confirm to set a new password"
+                text = "We’ve sent a password reset link to your email.\nPlease follow the instructions to reset your password."
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
             PrimaryButton(
-                text = "Confirm",
+                text = "Back to Login",
                 onClick = {
-                    navController.navigate("forgot_pass4")
+                    navController.navigate("login") {
+                        popUpTo("login") { inclusive = true }
+                    }
                 }
             )
         }
     }
 }
+
 
 @Composable
 fun ForgotPass4(navController: NavController) {
@@ -366,7 +338,7 @@ fun ForgotPass1Preview() {
 @Preview(showBackground = true)
 @Composable
 fun ForgotPass2Preview() {
-    ForgotPass2(navController = rememberNavController())
+    ForgotPass2(navController = rememberNavController(), email = "example@email.com")
 }
 
 @Preview(showBackground = true)

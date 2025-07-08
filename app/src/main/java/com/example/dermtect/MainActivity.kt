@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             DermtectTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "settings") {
+                NavHost(navController = navController, startDestination = "splash") {
                     composable("splash") { SplashScreen(navController) }
                     composable("onboarding_screen1") { OnboardingScreen1(navController) }
                     composable("onboarding_screen2") { OnboardingScreen2(navController) }
@@ -62,7 +62,10 @@ class MainActivity : ComponentActivity() {
                     composable("login") { Login(navController = navController) }
                     composable("register") { Register(navController = navController) }
                     composable("forgot_pass1") { ForgotPass1(navController) }
-                    composable("forgot_pass2") { ForgotPass2(navController) }
+                    composable("forgot_pass2?email={email}") { backStackEntry ->
+                        val email = backStackEntry.arguments?.getString("email") ?: ""
+                        ForgotPass2(navController, email)
+                    }
                     composable("forgot_pass3") { ForgotPass3(navController) }
                     composable("forgot_pass4") { ForgotPass4(navController) }
                     composable("user_home") {UserHomeScreen(navController = navController) }
