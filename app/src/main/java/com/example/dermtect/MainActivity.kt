@@ -11,6 +11,7 @@ import com.example.dermtect.ui.components.FindClinic1Screen
 import com.example.dermtect.ui.components.FindClinic2Screen
 import com.example.dermtect.ui.screens.AboutScreen
 import com.example.dermtect.ui.screens.ArticleDetailScreen
+import com.example.dermtect.ui.screens.ChangePasswordScreen
 import com.example.dermtect.ui.screens.DermaHomeScreen
 import com.example.dermtect.ui.screens.ForgotPass1
 import com.example.dermtect.ui.screens.ForgotPass2
@@ -68,6 +69,10 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("forgot_pass3") { ForgotPass3(navController) }
                     composable("forgot_pass4") { ForgotPass4(navController) }
+                    composable("change_pass") {
+                        ChangePasswordScreen(navController)
+                    }
+
                     composable("user_home") {UserHomeScreen(navController = navController) }
                     composable("derma_home") {DermaHomeScreen(navController = navController) }
                     composable("notifications") {NotificationScreen(navController = navController) }

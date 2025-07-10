@@ -22,10 +22,33 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.dermtect.R
 import com.example.dermtect.ui.components.BubblesBackground
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import com.example.dermtect.ui.components.DialogTemplate
+import com.example.dermtect.ui.components.GifImage
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
+
 
 @Composable
 fun ProfileScreen(navController: NavController) {
     var showPhoto by remember { mutableStateOf(false) }
+    var showDeleteAccountDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val user = FirebaseAuth.getInstance().currentUser
+    val email = user?.email
+    var isLoading by remember { mutableStateOf(false) }
+
+    DialogTemplate(
+        show = isLoading,
+        title = "Deleting Account",
+        description = "Please wait ...",
+        imageContent = {
+            GifImage(resId = R.drawable.loader, size = 150)
+        },
+        onDismiss = {},
+        autoDismiss = false
+    )
 
     BubblesBackground {
         Box(
@@ -155,7 +178,7 @@ fun ProfileScreen(navController: NavController) {
                     ChangePasswordRow(
                         icon = R.drawable.lock_icon,
                         label = "Change Password",
-                        onClick = {navController.navigate("forgot_pass1")
+                        onClick = {navController.navigate("change_pass")
                         }
                     )
 
@@ -168,8 +191,12 @@ fun ProfileScreen(navController: NavController) {
                     DeleteAccountRow(
                         icon = R.drawable.bin_icon,
                         label = "Delete Account",
-                        onClick = { }
+                        onClick = {
+                            showDeleteAccountDialog = true
+                        }
                     )
+
+
 
                     Spacer(modifier = Modifier.height(16.dp))
                     ProfileLogoutRow {
@@ -217,7 +244,51 @@ fun ProfileScreen(navController: NavController) {
                         )
                     }
                 }
+
+
             }
+            if (showDeleteAccountDialog) {
+                DeleteAccountDialog(
+                    onDismiss = { showDeleteAccountDialog = false },
+                    onDeleteConfirmed = { password ->
+                        isLoading = true
+
+                        val credential = EmailAuthProvider.getCredential(email!!, password)
+
+                        user!!.reauthenticate(credential)
+                            .addOnCompleteListener { authTask ->
+                                if (authTask.isSuccessful) {
+                                    user.delete()
+                                        .addOnCompleteListener { deleteTask ->
+                                            isLoading = false
+                                            if (deleteTask.isSuccessful) {
+                                                // ✅ Show toast and navigate safely using context from remember
+                                                Toast.makeText(context, "Account deleted", Toast.LENGTH_SHORT).show()
+
+                                                navController.navigate("login") {
+                                                    popUpTo("profile") { inclusive = true }
+                                                }
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    deleteTask.exception?.message ?: "Failed to delete account",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
+                                            }
+                                        }
+                                } else {
+                                    isLoading = false
+                                    Toast.makeText(
+                                        context,
+                                        authTask.exception?.message ?: "Wrong password",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                    }
+                )
+            }
+
 
         }
     }
@@ -395,3 +466,70 @@ fun ProfileLogoutRow(onClick: () -> Unit) {
         )
     }
 }
+
+@Composable
+fun DeleteAccountDialog(
+    onDismiss: () -> Unit,
+    onDeleteConfirmed: (String) -> Unit
+) {
+    var password by remember { mutableStateOf("") }
+
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Confirm Deletion",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color.Red
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = "Enter your current password to delete your account.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") },
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancel")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = {
+                            onDeleteConfirmed(password)
+                        },
+                        enabled = password.isNotBlank()
+                    ) {
+                        Text("Delete", color = Color.White)
+                    }
+                }
+            }
+        }
+    }
+}
+
