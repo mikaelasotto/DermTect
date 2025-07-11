@@ -20,9 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.dermtect.R
@@ -60,23 +62,65 @@ fun UserHomeScreen(navController: NavController) {
         }
     }
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Add vertical space above the welcome section
+        Spacer(modifier = Modifier.height(32.dp))
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White)) {
-
-        TopRightNotificationIcon(
-            onNotifClick = {
-                if (!hasConsented) {
-                    showConsentDialog = true
-                    return@TopRightNotificationIcon
-                }
-                navController.navigate("notifications")
-            },
+        Box(
             modifier = Modifier
-                .padding(top = 50.dp, end = 25.dp)
-                .align(Alignment.End)
-        )
+                .fillMaxWidth()
+                .height(176.dp) // matches your light blue container height
+                .background(Color(0x3DCDFFFF)) // 24% opacity of #CDFFFF
+                .padding(start = 20.dp, end = 20.dp, top = 26.dp) // spacing from top
+        ) {
+            Column(
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Text(
+                    text = "Hello,",
+                    style = MaterialTheme.typography.displayMedium.copy(
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 32.sp,
+                        color = Color(0xFF1D1D1D)
+                    )
+                )
+                Text(
+                    text = "$firstName!",
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 42.sp,
+                        color = Color(0xFF1D1D1D)
+                    )
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "Early Detection Saves Lives.",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Normal,
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 16.sp,
+                        color = Color(0xFF1D1D1D)
+                    )
+                )
+            }
+
+            TopRightNotificationIcon(
+                onNotifClick = {
+                    if (!hasConsented) {
+                        showConsentDialog = true
+                        return@TopRightNotificationIcon
+                    }
+                    navController.navigate("notifications")
+                },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 8.dp)
+            )
+        }
 
 
         Column(
@@ -87,20 +131,7 @@ fun UserHomeScreen(navController: NavController) {
             horizontalAlignment = Alignment.Start
         ) {
 
-            Text(
-                text = "Hello,",
-                style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Normal)
-            )
-            Text(
-                text = "$firstName!",
-                style = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold)
-            )
-            Text(
-                text = "Early Detection Saves Lives.",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal)
-            )
-
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             HomeFeatureButtonsRow(
                 hasConsented = hasConsented,
                 onShowConsentDialog = { showConsentDialog = true },
@@ -109,12 +140,11 @@ fun UserHomeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(20.dp))
             HighlightCard(onHighlightClick = {
-                val highlightItem = NewsItem( //sample lang
+                val highlightItem = NewsItem(
                     imageResId = R.drawable.sample_skin,
                     title = "Skin Tone & Cancer Risk",
                     description =
-                            "Skin cancer is among the most prevalent cancers globally, with millions of new cases diagnosed each year. While much attention has been given to sun protection, the role of skin tone in cancer risk is often overlooked.Individuals with lighter skin tones have less melanin, making them more vulnerable to ultraviolet (UV) radiation damage. This can increase the chances of developing basal cell carcinoma, squamous cell carcinoma, or melanoma. However, having a darker skin tone doesn’t make one immune — it often leads to delayed diagnoses because early signs are harder to detect.Dermatologists emphasize the importance of regular skin checks for everyone, regardless of skin color. Using sunscreen with at least SPF 30, avoiding tanning beds, and wearing protective clothing are essential preventive steps.Understanding your unique risk factors, including skin tone, is the first step toward early detection and treatment. Awareness saves lives, and it's time to include all skin types in the conversation" +
-                            "Skin cancer is among the most prevalent cancers globally, with millions of new cases diagnosed each year. While much attention has been given to sun protection, the role of skin tone in cancer risk is often overlooked.Individuals with lighter skin tones have less melanin, making them more vulnerable to ultraviolet (UV) radiation damage. This can increase the chances of developing basal cell carcinoma, squamous cell carcinoma, or melanoma. However, having a darker skin tone doesn’t make one immune — it often leads to delayed diagnoses because early signs are harder to detect.Dermatologists emphasize the importance of regular skin checks for everyone, regardless of skin color. Using sunscreen with at least SPF 30, avoiding tanning beds, and wearing protective clothing are essential preventive steps.Understanding your unique risk factors, including skin tone, is the first step toward early detection and treatment. Awareness saves lives, and it's time to include all skin types in the conversation.",
+                        "Skin cancer is among the most prevalent cancers globally...",
                     source = "Health Times",
                     date = "2025-07-02"
                 )
@@ -122,7 +152,7 @@ fun UserHomeScreen(navController: NavController) {
                 navController.navigate("highlightarticle/$json")
             })
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             NewsSection()
             Spacer(modifier = Modifier.height(10.dp))
             when {
@@ -154,7 +184,6 @@ fun UserHomeScreen(navController: NavController) {
 
                 }
             }
-
         }
 
         BottomNavBar(
@@ -166,23 +195,21 @@ fun UserHomeScreen(navController: NavController) {
             },
             setPendingCameraAction = { pendingCameraAction = it },
             coroutineScope = coroutineScope,
-            viewModel = viewModel, // ✅ add this
+            viewModel = viewModel,
             modifier = Modifier.fillMaxWidth()
         )
 
-
         if (showConsentDialog && !hasConsented) {
             PrivacyConsentDialog(
-        show = showConsentDialog,
+                show = showConsentDialog,
                 onConsent = {
                     viewModel.saveUserConsent()
-                    showConsentDialog = false // just UI trigger
+                    showConsentDialog = false
                 },
                 onDecline = {
-                    showConsentDialog = false                    // Just hide dialog, no access to other features
+                    showConsentDialog = false
                 }
             )
-
         }
     }
 }
@@ -264,12 +291,14 @@ fun HomeFeatureButton(
         }
     }
 }
+
 @Composable
 fun HighlightCard(onHighlightClick: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Card(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
+                .height(100.dp)
                 .align(Alignment.Center)
                 .clickable { onHighlightClick() }, // ✅ add comma here
             colors = CardDefaults.cardColors(
@@ -285,8 +314,9 @@ fun HighlightCard(onHighlightClick: () -> Unit) {
                         text = "Skin Tone & Cancer Risk",
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Understand the link between skin tone and cancer risk.",
+                        text = "Understand the link between\nskin tone and cancer risk.",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -313,44 +343,59 @@ fun NewsSection(modifier: Modifier = Modifier) {
 @Composable
 fun NewsCarousel(newsItems: List<NewsItem>, onItemClick: (NewsItem) -> Unit) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        contentPadding = PaddingValues(start = 10.dp, end = 10.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(horizontal = 20.dp)
     ) {
         items(newsItems) { item ->
             Card(
                 modifier = Modifier
-                    .width(200.dp)
+                    .width(240.dp)
                     .clickable { onItemClick(item) },
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA))
             ) {
-                item.imageResId?.let { resId ->
-                    Image(
-                        painter = painterResource(id = resId),
-                        contentDescription = item.title,
+                Column {
+                    // Image at the top with rounded corners (shared with card)
+                    item.imageResId?.let { resId ->
+                        Image(
+                            painter = painterResource(id = resId),
+                            contentDescription = item.title,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(120.dp)
+                                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                        )
+                    }
+
+                    // Text content
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(70.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                    )
+                            .padding(12.dp)
+                    ) {
+                        Text(
+                            text = item.title,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF1D1D1D)
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = item.description,
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                fontWeight = FontWeight.Normal,
+                                color = Color(0xFF1D1D1D)
+                            ),
+                            maxLines = 2
+                        )
+                    }
                 }
-
-                Text(
-                    text = item.title,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                )
-
-                Text(
-                    text = item.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                )
             }
         }
     }
 }
-
 
 
 @Composable
@@ -367,7 +412,7 @@ fun BottomNavBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(72.dp)
+            .height(90.dp) // Outer Box
             .background(Color.White)
     ) {
         Surface(
@@ -380,8 +425,8 @@ fun BottomNavBar(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(horizontal = 32.dp),
+                    .height(74.dp) // Inner Row
+                    .padding(horizontal = 65.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -411,9 +456,9 @@ fun BottomNavBar(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .offset(y = (-12).dp)
-                .size(60.dp)
+                .size(65.dp)
                 .background(Color(0xFF0FB2B2), shape = CircleShape)
-                .border(5.dp, Color.White, shape = CircleShape)
+                .border(3.dp, Color.White, shape = CircleShape)
                 .clickable {
                     if (!hasConsented) {
                         setPendingCameraAction(true)

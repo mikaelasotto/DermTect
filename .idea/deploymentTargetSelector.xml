@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Dermtect.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-10T05:22:37.758880Z">
+        <DropdownSelection timestamp="2025-07-11T03:09:18.392615400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Mikaela\.android\avd\Pixel_6.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=amxktckrfi85w4pj" />
             </handle>
           </Target>
         </DropdownSelection>

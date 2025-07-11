@@ -120,8 +120,8 @@ fun ProfileScreen(navController: NavController) {
                 modifier = Modifier
                     .offset(x = 25.dp, y = 344.dp)
                     .size(width = 363.dp, height = 388.dp)
-                    .shadow(8.dp, RoundedCornerShape(36.dp)),
-                shape = RoundedCornerShape(36.dp),
+                    .shadow(8.dp, RoundedCornerShape(10.dp)),
+                shape = RoundedCornerShape(10.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {

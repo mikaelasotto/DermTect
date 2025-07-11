@@ -15,6 +15,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import com.example.dermtect.R
+
 
 @Composable
 fun SplashScreen(navController: NavController) {
@@ -33,8 +38,10 @@ fun SplashScreen(navController: NavController) {
     ) {
         Text(
             text = "DermTect",
-            style = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold),
-            color = Color.White
+            fontSize = 48.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            fontFamily = FontFamily(Font(R.font.poppins_bold))
         )
     }
 }
