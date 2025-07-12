@@ -445,7 +445,7 @@ fun BottomNavBar(
                                 onShowConsentDialog()
                                 return@clickable
                             }
-                            navController.navigate("profile")
+                            navController.navigate("settings")
                         }
                 )
 

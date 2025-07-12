@@ -18,16 +18,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dermtect.R
 import com.example.dermtect.ui.components.BackButton
+import androidx.navigation.compose.rememberNavController
+import com.example.dermtect.ui.components.DialogTemplate
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun SettingsScreen(navController: NavController) {
     var showPhoto by remember { mutableStateOf(false) }
     var notificationsEnabled by remember { mutableStateOf(false) }
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -35,13 +40,12 @@ fun SettingsScreen(navController: NavController) {
             .verticalScroll(rememberScrollState())
             .background(Color(0xFFEAFDFD))
     ) {
+        // Top Profile Section
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(360.dp) // adjust as needed
-                .background(
-                    color = Color(0xFFCDFFFF)
-                )
+                .height(360.dp)
+                .background(color = Color(0xFFCDFFFF))
         ) {
             Box(
                 modifier = Modifier
@@ -53,6 +57,7 @@ fun SettingsScreen(navController: NavController) {
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
             }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -61,7 +66,7 @@ fun SettingsScreen(navController: NavController) {
             ) {
                 Text(
                     text = "Settings",
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.headlineSmall.copy(fontSize = 26.sp)
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -70,160 +75,195 @@ fun SettingsScreen(navController: NavController) {
                     painter = painterResource(id = R.drawable.profile),
                     contentDescription = "Profile",
                     modifier = Modifier
-                        .size(150.dp)
+                        .size(130.dp)
                         .clip(CircleShape)
                         .clickable { showPhoto = true },
                     contentScale = ContentScale.Crop
                 )
 
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
                     text = "Mikaela Manalang",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold)
                 )
             }
-
         }
 
-        }
-
-
-
-            Card(
-                modifier = Modifier
-                    .offset(x = 25.dp, y = 344.dp)
-                    .size(width = 363.dp, height = 388.dp)
-                    .shadow(8.dp, RoundedCornerShape(36.dp)),
-                shape = RoundedCornerShape(36.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-            ) {
-                Column(modifier = Modifier.padding(0.dp)) {
-                    Box(
-                        modifier = Modifier
-                            .offset(x = 19.dp, y = 18.dp)
-                            .size(width = 323.dp, height = 85.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color(0xFFEDFFFF))
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(start = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(width = 62.dp, height = 57.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(Color(0xFFCDFFFF)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.google_logo),
-                                    contentDescription = "Google Icon",
-                                    modifier = Modifier.size(28.dp)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column {
-                                Text(
-                                    text = "mikaelasotto1@gmail.com",
-                                    fontSize = 14.sp,
-                                    color = Color(0xFF484848),
-                                    fontWeight = FontWeight.Normal
-                                )
-                                Text(
-                                    text = "Google Account",
-                                    fontSize = 12.sp,
-                                    color = Color.Gray,
-                                    fontWeight = FontWeight.Normal
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(40.dp))
-
-                    SettingsRow(
-                        icon = R.drawable.user_vector_settings,
-                        label = "Profile",
-                        onClick = {
-                            navController.navigate("profile")
-                        }
-                    )
-
-                    SettingsRow(
-                        icon = R.drawable.info,
-                        label = "About/Credits",
-                        onClick = {
-                            navController.navigate("about")
-                        }
-                    )
-
-                    NotificationRow(
-                        icon = R.drawable.notifications_vector,
-                        label = "Notification",
-                        checked = notificationsEnabled,
-                        onCheckedChange = { notificationsEnabled = it },
-                        onClick = {
-                            navController.navigate("notifications")
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    LogoutRow {
-                        // Handle logout click
-                    }
-                }
-            }
-
-            if (showPhoto) {
+        // Settings Card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 25.dp)
+                .offset(y = (-30).dp)
+                .shadow(8.dp, RoundedCornerShape(15.dp)),
+            shape = RoundedCornerShape(15.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFFDFDFD)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                // Account Box
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color(0x80000000)) // semi-transparent backdrop
+                        .fillMaxWidth()
+                        .height(85.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFFEDFFFF))
+                        .padding(start = 12.dp),
+                    contentAlignment = Alignment.CenterStart
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .offset(x = 60.dp, y = 300.dp)
-                            .size(width = 296.dp, height = 295.dp),
-                        contentAlignment = Alignment.Center
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = "Full Photo",
+                        Box(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                                .size(width = 62.dp, height = 57.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color(0xFFCDFFFF)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.google_logo),
+                                contentDescription = "Google Icon",
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
 
-                    Box(
-                        modifier = Modifier
-                            .offset(x = 56.dp, y = 296.dp)
-                            .size(width = 37.dp, height = 35.dp)
-                            .clip(CircleShape)
-                            .background(Color.White)
-                            .clickable { showPhoto = false },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.x_icon), // replace with your actual 'X' icon
-                            contentDescription = "Close",
-                            tint = Color.Black,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column {
+                            Text(
+                                text = "mikaelasotto1@gmail.com",
+                                fontSize = 14.sp,
+                                color = Color(0xFF484848),
+                                fontWeight = FontWeight.Normal
+                            )
+                            Text(
+                                text = "Google Account",
+                                fontSize = 12.sp,
+                                color = Color.Gray,
+                                fontWeight = FontWeight.Normal
+                            )
+                        }
                     }
                 }
-            }
 
+                Spacer(modifier = Modifier.height(15.dp))
+
+                SettingsRow(
+                    icon = R.drawable.user_vector_settings,
+                    label = "Profile",
+                    onClick = {
+                        navController.navigate("profile")
+                    }
+                )
+
+                SettingsRow(
+                    icon = R.drawable.info,
+                    label = "About/Credits",
+                    onClick = {
+                        navController.navigate("about")
+                    }
+                )
+
+                NotificationRow(
+                    icon = R.drawable.notifications_vector,
+                    label = "Notification",
+                    checked = notificationsEnabled,
+                    onCheckedChange = { notificationsEnabled = it },
+                    onClick = {
+                        navController.navigate("notifications")
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                LogoutRow {
+                    showLogoutDialog = true
+                }
+                if (showLogoutDialog) {
+                    LogoutDialog(
+                        show = showLogoutDialog,
+                        onDismiss = { showLogoutDialog = false },
+                        onLogoutConfirmed = {
+                            showLogoutDialog = false
+                            FirebaseAuth.getInstance().signOut()
+                            navController.navigate("login") {
+                                popUpTo("settings") { inclusive = true }
+                            }
+                        }
+                    )
+
+                }
+
+
+            }
         }
+
+        // Full Image Preview
+        if (showPhoto) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0x80000000)) // semi-transparent backdrop
+            ) {
+                Box(
+                    modifier = Modifier
+                        .offset(x = 60.dp, y = 300.dp)
+                        .size(width = 286.dp, height = 285.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = "Full Photo",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .offset(x = 56.dp, y = 296.dp)
+                        .size(width = 37.dp, height = 35.dp)
+                        .clip(CircleShape)
+                        .background(Color.White)
+                        .clickable { showPhoto = false },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.x_icon),
+                        contentDescription = "Close",
+                        tint = Color.Black,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun LogoutDialog(
+    show: Boolean,
+    onDismiss: () -> Unit,
+    onLogoutConfirmed: () -> Unit
+) {
+    DialogTemplate(
+        show = show,
+        title = "Logout",
+        description = "Are you sure you want to logout?",
+        primaryText = "Logout",
+        onPrimary = onLogoutConfirmed,
+        secondaryText = "Cancel",
+        onSecondary = onDismiss,
+        onDismiss = onDismiss
+    )
+}
+
+
 @Composable
 fun SettingsRow(icon: Int, label: String, onClick: () -> Unit) {
     Row(
@@ -348,4 +388,10 @@ fun LogoutRow(onClick: () -> Unit) {
             fontWeight = FontWeight.Normal
         )
     }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun SettingsPreview() {
+    SettingsScreen(navController = rememberNavController())
 }
